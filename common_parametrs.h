@@ -1,6 +1,13 @@
-#pragma once
+#ifndef _COMMON_PARAMETRS_H_
+#define _COMMON_PARAMETRS_H_
 
+#include <SDL.h>
+
+#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 800
 #define SPEED 2.0F
+
+
 /*
 * рср мсфмн опндхтюимхрэ пюулепш нймю
 * йнкхвеярбн тоя
@@ -26,3 +33,5 @@ struct mainWindow
 	int w, h;
 	float scaleX, scaleY;
 };
+
+#endif
