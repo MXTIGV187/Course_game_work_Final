@@ -7,9 +7,11 @@ struct Player
 	int score;
 	float x;
 	float y;
+	bool is_die;
+	bool can_jump;
 	//Скины хуины че ещё
 };
 
-Player* PlayerInit(int hp, int score, float x, float y);
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool can_jump);
 
 #endif

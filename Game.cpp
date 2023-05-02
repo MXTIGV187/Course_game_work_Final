@@ -2,6 +2,7 @@
 #include "common_parametrs.h"
 #include "functions.h"
 #include "Player.h"
+#include "Weapon.h"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -14,16 +15,15 @@ int main(int argc, char* argv[])
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
-	PlayerInit(100, 100, 500, 500);
-	Player* player;
-	mainPhysics* physics;
+	mainPhysics* physics = (mainPhysics*)malloc(sizeof(mainPhysics));
+	Player* player = PlayerInit(100, 100, 500, 500, 0, 1);
+	bool isup = 0, isdown = 0, isleft = 0, isright = 0;
+	int lasttime = SDL_GetTicks();
+	int newtime;
+	int dt = 0;
 	while (running)
 	{
 		SDL_Event event;
-		bool isup, isdown, isleft, isright;
-		int lasttime = SDL_GetTicks();
-		int newtime;
-		int dt = 0;
 		while (SDL_PollEvent(&event))
 		{
 			if (event.type == SDL_QUIT)
