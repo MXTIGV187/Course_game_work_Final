@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "functions.h"
 #include "common_parametrs.h"
+#include <SDL_image.h>
 
 void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface)
 {
@@ -28,6 +29,18 @@ void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 		exit(1);
 	}
 
+	int res;
+	if ((res = IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG)) == 0)
+	{
+		printf_s("Couldn't init SDL_Image! Error: %s\n", SDL_GetError());
+		system("pause");
+		Quit(window, renderer, screen_surface);
+	}
+	if (res & IMG_INIT_JPG) printf_s("Init JPG library.\n"); else printf_s("Can't Init JPG library!\n");
+	if (res & IMG_INIT_PNG) printf_s("Init PNG library.\n"); else printf_s("Can't Init PNG library!\n");
+
+
+
 }
 
 void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface) 
@@ -40,6 +53,6 @@ void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 
 	if (window != NULL)
 		SDL_DestroyWindow(*window);
-
+	IMG_Quit();
 	SDL_Quit();
 }

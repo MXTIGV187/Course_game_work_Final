@@ -34,4 +34,16 @@ struct mainWindow
 	float scaleX, scaleY;
 };
 
+struct mainRenderer
+{
+	SDL_Texture* texture;
+	SDL_Rect textureSize;
+};
+
+struct mainHero
+{
+	SDL_Point position;
+	mainPhysics physic;
+	mainRenderer render;
+};
 #endif
