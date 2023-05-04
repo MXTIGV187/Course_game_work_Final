@@ -38,12 +38,9 @@ void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 	}
 	if (res & IMG_INIT_JPG) printf_s("Init JPG library.\n"); else printf_s("Can't Init JPG library!\n");
 	if (res & IMG_INIT_PNG) printf_s("Init PNG library.\n"); else printf_s("Can't Init PNG library!\n");
-
-
-
 }
 
-void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface) 
+void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface)
 {
 	if (screen_surface != NULL)
 		SDL_FreeSurface(*screen_surface);
@@ -55,4 +52,18 @@ void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 		SDL_DestroyWindow(*window);
 	IMG_Quit();
 	SDL_Quit();
+}
+
+void Tickrate(int& lasttime, int& newtime, int& dt)
+{
+	newtime = SDL_GetTicks();
+	dt = newtime - lasttime;
+	lasttime = newtime;
+	if (dt < 16)
+	{
+		SDL_Delay(16 - dt);
+		newtime = SDL_GetTicks();
+		dt = newtime - lasttime;
+	}
+	lasttime = newtime;
 }
