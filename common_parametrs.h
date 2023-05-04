@@ -5,7 +5,6 @@
 
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 800
-#define SPEED 2.0F
 
 
 /*
@@ -18,15 +17,6 @@
 * пюяонкнфемхъ оепянмюфю еаюмнцн
 * х бяъйсч усимч
 */
-
-struct mainPhysics
-{
-	float speed;
-	float gravity;
-	float XmoveLeft, XmoveRight, Ymove;
-	bool onborder;
-
-};
 
 struct mainWindow
 {
@@ -41,10 +31,4 @@ struct mainRenderer
 
 };
 
-struct mainHero
-{
-	SDL_Point position;
-	mainPhysics physic;
-	mainRenderer render;
-};
 #endif

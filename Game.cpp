@@ -30,10 +30,13 @@ int main(int argc, char* argv[])
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("ass.jpg", &back_rect, window, renderer, screen_surface);
 
+	Player* player = PlayerInit(100, 100, 500, 200, 0, 1);
+	mainPhysics* mainPhys = PhysInit(100, 100);
 
-	mainPhysics* physics = (mainPhysics*)malloc(sizeof(mainPhysics));
-	Player* player = PlayerInit(100, 100, 500, 500, 0, 1);
 	bool isup = 0, isdown = 0, isleft = 0, isright = 0;
+
+	float dy = 0, last_y = 0, new_y = 0;
+
 	bool animate_run = true;
 	bool animate_idle = true;
 
@@ -45,6 +48,8 @@ int main(int argc, char* argv[])
 	int frame_count = 5;
 	int cur_frametime = 0;
 	int max_frametime = 1000/10;
+
+
 
 
 	while (running)
@@ -79,27 +84,14 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
-		if (isup) player->y -= 100  * dt / 1000;
-		if (isdown) player->y += 100 * dt / 1000;
-		if (isleft) player->x -= 100 * dt / 1000;
-		if (isright) player->x += 100 * dt / 1000;
+
 		
-		animate_run = isup || isdown || isright || isleft;
 
 
-		newtime = SDL_GetTicks();
-		dt = newtime - lasttime;
-		lasttime = newtime;
-		if (dt < 16)
-		{
-			SDL_Delay(16 - dt);
-			newtime = SDL_GetTicks();
-			dt = newtime - lasttime;
-		}
-		lasttime = newtime;
-		
+		animate_run = isleft || isright;
 
 		dst_rect = { (int)player->x,(int)player->y,player_rect.w,player_rect.h };
+		Tickrate(lasttime, newtime, dt);
 
 #pragma region DRAWING
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -131,6 +123,9 @@ int main(int argc, char* argv[])
 
 		
 #pragma endregion
+
+
+		PlayerMove(player->x, player->y, last_y, player->is_jump, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys->gravity, mainPhys->speed);
 
 		SDL_RenderPresent(renderer);
 	}
