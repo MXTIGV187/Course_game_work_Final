@@ -4,6 +4,7 @@
 #include "common_parametrs.h"
 #include <SDL_image.h>
 
+
 void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -55,4 +56,20 @@ void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 		SDL_DestroyWindow(*window);
 	IMG_Quit();
 	SDL_Quit();
+}
+
+SDL_Texture* loadTextureFromFile(const char* filename, SDL_Rect* rect, SDL_Window* window, SDL_Renderer* renderer, SDL_Surface* screen_surface) {
+
+	SDL_Surface* surface = IMG_Load(filename);
+	if (surface == NULL)
+	{
+
+		printf("colndt load image eror %s", filename, SDL_GetError());
+		system("pause");
+		Quit(&window, &renderer, &screen_surface);
+	}
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	*rect = { 0,0,surface->w,surface->h };
+	SDL_FreeSurface(surface);
+	return texture;
 }

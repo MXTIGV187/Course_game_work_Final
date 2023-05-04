@@ -38,6 +38,7 @@ struct mainRenderer
 {
 	SDL_Texture* texture;
 	SDL_Rect textureSize;
+
 };
 
 struct mainHero

@@ -3,5 +3,6 @@
 
 void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface);
 void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface);
+SDL_Texture* loadTextureFromFile(const char* filename, SDL_Rect* rect, SDL_Window* window, SDL_Renderer* renderer, SDL_Surface* screen_surface);
 
 #endif
