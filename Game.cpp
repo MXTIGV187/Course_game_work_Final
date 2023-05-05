@@ -8,6 +8,7 @@
 #include "Animation.h"
 #include "Level.h"
 
+
 #define DIR_RIGHT 1
 #define DIR_LEFT  2
 
@@ -16,10 +17,10 @@ SDL_Renderer* renderer = NULL;
 SDL_Surface* screen_surface = NULL;
 frameAnim* Run;
 
-
 int main(int argc, char* argv[])
 {
 	SDL_Rect dst_rect = { 0,0,0,0 };
+	SDL_Rect dst_enem_rect = { 0,0,0,0 };
 	bool running = 1;
 	Init(&window, &renderer, &screen_surface);
 
@@ -39,6 +40,12 @@ int main(int argc, char* argv[])
 	Player* player = PlayerInit(100, 100, 300, 300, 0, 1);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
+	SDL_Rect enemy_rect;
+	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect, window, renderer, screen_surface);
+	enemy_rect.w = enemy_rect.h;
+
+	Enemy* enemy = EnemyInit(100, 100, 200, 300, 0);
+
 	bool isup = 0, isdown = 0, isleft = 0, isright = 0;
 
 	float dy = 0, last_y = 0, new_y = 0;
@@ -51,7 +58,7 @@ int main(int argc, char* argv[])
 	int dt = 0;
 
 	int frame = 0;
-	int frame_count = 5;
+	int frame_count = 6;
 	int cur_frametime = 0;
 	int max_frametime = 1000 / 10;
 
@@ -63,6 +70,7 @@ int main(int argc, char* argv[])
 	SDL_FRect* Rect1 = InitObject(WINDOW_WIDTH / 2.36, WINDOW_HEIGHT / 1.6, WINDOW_WIDTH / 5.96, 1000);
 	SDL_FRect* Rect2 = InitObject(WINDOW_WIDTH / 1.49, WINDOW_HEIGHT / 1.24, WINDOW_WIDTH / 5.96, 1000);
 	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
+	SDL_FRect* enemyRect = InitObject(enemy->x, enemy->y, 10, 130);
 
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
@@ -71,7 +79,7 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
-
+		enemyRect = InitObject(enemy->x+30, enemy->y+30, 40, 65);
 
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
@@ -106,10 +114,9 @@ int main(int argc, char* argv[])
 			}
 		}
 
-
-
-
 		animate_run = isleft || isright;
+
+		dst_enem_rect = { (int)enemy->x,(int)enemy->y,enemy_rect.w,enemy_rect.h };
 
 		dst_rect = { (int)player->x,(int)player->y,player_rect.w,player_rect.h };
 		Tickrate(lasttime, newtime, dt);
@@ -120,6 +127,7 @@ int main(int argc, char* argv[])
 
 		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
 		if (animate_run) {
+			
 			cur_frametime += dt;
 			if (cur_frametime >= max_frametime)
 			{
@@ -135,7 +143,7 @@ int main(int argc, char* argv[])
 		}
 		if (animate_run == false)
 		{
-
+			
 			cur_frametime += dt;
 			if (cur_frametime >= max_frametime)
 			{
@@ -148,11 +156,25 @@ int main(int argc, char* argv[])
 			else
 				SDL_RenderCopyEx(renderer, player_tex_idle, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
+		}
+
+		if (running) {
+
+			cur_frametime += dt;
+			SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect, &dst_enem_rect);
+			if (cur_frametime >= max_frametime)
+			{
+				cur_frametime -= max_frametime;
+				frame = (frame + 1) % frame_count;
+				enemy_rect.x = enemy_rect.w * frame;
+			}
+		}
+
 
 #pragma endregion
 
-
 		PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, Rect, Rect1, Rect2, playerRect);
+		HitBox(enemyRect, Rect, Rect1, Rect2, enemy, mainPhys, dt);
 		if (reload == 1)
 		{
 			free(player);
@@ -164,25 +186,27 @@ int main(int argc, char* argv[])
 			SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
 			SDL_RenderFillRectF(renderer, Rect);
 
-			SDL_RenderDrawRectF(renderer, Rect); 
+			SDL_RenderDrawRectF(renderer, Rect);
 			SDL_RenderFillRectF(renderer, Rect1);
 
-			SDL_RenderDrawRectF(renderer, Rect1); 
-			SDL_RenderFillRectF(renderer, Rect2);
+			SDL_RenderDrawRectF(renderer, Rect1);
+			SDL_RenderFillRectF(renderer,Rect2);
 
 			SDL_RenderDrawRectF(renderer, Rect2);
 			SDL_RenderFillRectF(renderer, playerRect);
-			
-			SDL_RenderDrawRectF(renderer, playerRect);
+			SDL_RenderFillRectF(renderer, enemyRect);
+
+			SDL_RenderDrawRectF(renderer, enemyRect);
 		}
 
-			SDL_RenderPresent(renderer);
-		}
-
-		SDL_DestroyTexture(player_tex_run);
-		SDL_DestroyTexture(back_tex);
-		Quit(&window, &renderer, &screen_surface);
-		return 0;
-
+		SDL_RenderPresent(renderer);
 	}
+
+	SDL_DestroyTexture(player_tex_run);
+	SDL_DestroyTexture(player_tex_idle);
+	SDL_DestroyTexture(enemy_tex_idle);
+	SDL_DestroyTexture(back_tex);
+	Quit(&window, &renderer, &screen_surface);
+	return 0;
+
 }

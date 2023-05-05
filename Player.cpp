@@ -22,43 +22,53 @@ mainPhysics* PhysInit(float speed, float gravity)
 	mainPhys->speed = speed;
 	return mainPhys;
 }
+Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump)
+{
+	Enemy* enemy = (Enemy*)malloc(sizeof(Enemy));
+	enemy->hp = hp;
+	enemy->x = x;
+	enemy->y = y;
+	enemy->is_die = is_die;
+	return enemy;
+}
 
-//void HitBox(SDL_FRect* enemyRect, SDL_FRect* Rect, SDL_FRect* Rect1, SDL_FRect* Rect2, Enemy* enemy, mainPhysics* mainPhys, int& dt)
-//{
-//	if (SDL_HasIntersectionF(enemyRect, Rect) || SDL_HasIntersectionF(enemyRect, Rect1) || SDL_HasIntersectionF(enemyRect, Rect2))
-//	{
-//
-//		enemy->is_jump = 0;
-//		if (SDL_HasIntersectionF(enemyRect, Rect))
-//		{
-//			if (enemyRect->y + enemyRect->h - 10 < Rect->y)
-//				enemy->y -= mainPhys->gravity * dt / 1000;
-//			else
-//			{
-//				enemy->y += mainPhys->gravity * dt / 1000;
-//			}
-//		}
-//		if (SDL_HasIntersectionF(enemyRect, Rect1))
-//		{
-//			if (enemyRect->y + enemyRect->h - 10 < Rect1->y)
-//				enemy->y -= mainPhys->gravity * dt / 1000;
-//			else
-//			{
-//				enemy->y += mainPhys->gravity * dt / 1000;
-//			}
-//		}
-//		if (SDL_HasIntersectionF(enemyRect, Rect2))
-//		{
-//			if (enemyRect->y + enemyRect->h - 10 < Rect2->y)
-//				enemy->y -= mainPhys->gravity * dt / 1000;
-//			else
-//			{
-//				enemy->y += mainPhys->gravity * dt / 1000;
-//			}
-//		}
-//	}
-//	else enemy->y += mainPhys->gravity * dt / 1000;
-//}
+
+void HitBox(SDL_FRect* enemyRect, SDL_FRect* Rect, SDL_FRect* Rect1, SDL_FRect* Rect2, Enemy* enemy, mainPhysics* mainPhys, int& dt)
+{
+	if (SDL_HasIntersectionF(enemyRect, Rect) || SDL_HasIntersectionF(enemyRect, Rect1) || SDL_HasIntersectionF(enemyRect, Rect2))
+	{
+
+		enemy->is_jump = 0;
+		if (SDL_HasIntersectionF(enemyRect, Rect))
+		{
+			if (enemyRect->y + enemyRect->h - 10 < Rect->y)
+				enemy->y -= mainPhys->gravity * dt / 1000;
+			else
+			{
+				enemy->y += mainPhys->gravity * dt / 1000;
+			}
+		}
+		if (SDL_HasIntersectionF(enemyRect, Rect1))
+		{
+			if (enemyRect->y + enemyRect->h - 10 < Rect1->y)
+				enemy->y -= mainPhys->gravity * dt / 1000;
+			else
+			{
+				enemy->y += mainPhys->gravity * dt / 1000;
+			}
+		}
+		if (SDL_HasIntersectionF(enemyRect, Rect2))
+		{
+			if (enemyRect->y + enemyRect->h - 10 < Rect2->y)
+				enemy->y -= mainPhys->gravity * dt / 1000;
+			else
+			{
+				enemy->y += mainPhys->gravity * dt / 1000;
+			}
+		}
+	}
+	else enemy->y += mainPhys->gravity * dt / 1000;
+}
 
 
 void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt, bool& isup,
