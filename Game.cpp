@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include "Animation.h"
 
+#define DIR_RIGHT 1
+#define DIR_LEFT  2
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* screen_surface = NULL;
@@ -18,6 +21,8 @@ int main(int argc, char* argv[])
 	SDL_Rect dst_rect = { 0,0,0,0 };
 	bool running = 1;
 	Init(&window, &renderer, &screen_surface);
+
+	int direction = 0;
 
 
 	SDL_Rect player_rect;
@@ -69,8 +74,8 @@ int main(int argc, char* argv[])
 				{
 				case SDL_SCANCODE_W: isup = 1; break;
 				case SDL_SCANCODE_S: isdown = 1; break;
-				case SDL_SCANCODE_A: isleft = 1; break;
-				case SDL_SCANCODE_D: isright = 1; break;
+				case SDL_SCANCODE_A: isleft = 1; direction = DIR_LEFT; break;
+				case SDL_SCANCODE_D: isright = 1; direction = DIR_RIGHT; break;
 				}
 				break;
 			case SDL_KEYUP:
@@ -99,7 +104,6 @@ int main(int argc, char* argv[])
 
 		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
 		if (animate_run) {
-			SDL_RenderCopy(renderer, player_tex_run, &player_rect, &dst_rect);
 			cur_frametime += dt;
 			if (cur_frametime >= max_frametime)
 			{
@@ -107,11 +111,17 @@ int main(int argc, char* argv[])
 				frame = (frame + 1) % frame_count;
 				player_rect.x = player_rect.w * frame;
 			}
+			if (direction == DIR_RIGHT)
+				SDL_RenderCopy(renderer, player_tex_run, &player_rect, &dst_rect);
+			else
+				SDL_RenderCopyEx(renderer, player_tex_run, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
 		}
+			
+		
 		if (animate_run==false)
 		{
-			SDL_RenderCopy(renderer, player_tex_idle, &player_rect, &dst_rect);
+			
 			cur_frametime += dt;
 			if (cur_frametime >= max_frametime)
 			{
@@ -119,8 +129,12 @@ int main(int argc, char* argv[])
 				frame = (frame + 1) % frame_count;
 				player_rect.x = player_rect.w * frame;
 			}
-		}
+			if (direction == DIR_RIGHT)
+				SDL_RenderCopy(renderer, player_tex_idle, &player_rect, &dst_rect);
+			else
+				SDL_RenderCopyEx(renderer, player_tex_idle, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
+		}
 		
 #pragma endregion
 
