@@ -152,29 +152,29 @@ int main(int argc, char* argv[])
 #pragma endregion
 
 
-			PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, Rect, Rect1, Rect2, playerRect);
-			if (reload == 1)
-			{
-				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1);
-				reload = 0;
-			}
-			if (debug % 2 == 0)
-			{
-				SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
-				SDL_RenderFillRectF(renderer, Rect);
+		PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, Rect, Rect1, Rect2, playerRect);
+		if (reload == 1)
+		{
+			free(player);
+			player = PlayerInit(100, 100, 300, 300, 0, 1);
+			reload = 0;
+		}
+		if (debug % 2 == 0)
+		{
+			SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
+			SDL_RenderFillRectF(renderer, Rect);
 
-				SDL_RenderDrawRectF(renderer, Rect);
-				SDL_RenderFillRectF(renderer, Rect1);
+			SDL_RenderDrawRectF(renderer, Rect); 
+			SDL_RenderFillRectF(renderer, Rect1);
 
-				SDL_RenderDrawRectF(renderer, Rect1);
-				SDL_RenderFillRectF(renderer, Rect2);
+			SDL_RenderDrawRectF(renderer, Rect1); 
+			SDL_RenderFillRectF(renderer, Rect2);
 
-				SDL_RenderDrawRectF(renderer, Rect2);
-				SDL_RenderFillRectF(renderer, playerRect);
-
-				SDL_RenderDrawRectF(renderer, playerRect);
-			}
+			SDL_RenderDrawRectF(renderer, Rect2);
+			SDL_RenderFillRectF(renderer, playerRect);
+			
+			SDL_RenderDrawRectF(renderer, playerRect);
+		}
 
 			SDL_RenderPresent(renderer);
 		}
