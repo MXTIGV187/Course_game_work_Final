@@ -200,6 +200,7 @@ int main(int argc, char* argv[])
 		}
 
 		SDL_RenderPresent(renderer);
+		SDL_Delay(16);
 	}
 
 	SDL_DestroyTexture(player_tex_run);
