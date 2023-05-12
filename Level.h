@@ -14,5 +14,7 @@ struct Object
 };
 
 SDL_FRect* InitObject(float x, float y, float w, float h);
+void MassSaveToTXT(SDL_FRect* CollisArray, const char* fileName, int& sizeArray);
+SDL_FRect* MassLoad(SDL_FRect*& CollisArray, const char* filename, int& sizeArray);
 
 #endif
