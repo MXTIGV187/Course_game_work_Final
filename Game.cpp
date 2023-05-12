@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect, window, renderer, screen_surface);
 	enemy_rect.w = enemy_rect.h;
 
-	Enemy* enemy = EnemyInit(100, 100, 200, 300, 0);
+	Enemy* enemy = EnemyInit(100, 340, 350, 0, 0);
 
 	bool isup = 0, isdown = 0, isleft = 0, isright = 0;
 
@@ -65,21 +65,23 @@ int main(int argc, char* argv[])
 	bool reload = 0;
 	int debug = 1;
 
-	SDL_FRect* CollisRect;
-	SDL_FRect* Rect = InitObject(0, WINDOW_HEIGHT / 1.47, WINDOW_WIDTH / 3, 1000);
-	SDL_FRect* Rect1 = InitObject(WINDOW_WIDTH / 2.36, WINDOW_HEIGHT / 1.6, WINDOW_WIDTH / 5.96, 1000);
-	SDL_FRect* Rect2 = InitObject(WINDOW_WIDTH / 1.49, WINDOW_HEIGHT / 1.24, WINDOW_WIDTH / 5.96, 1000);
+	
+	SDL_FRect* CollisArray[100];
 	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
 	SDL_FRect* enemyRect = InitObject(enemy->x, enemy->y, 10, 130);
 
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
 
+	int sizeArray = 0;
+
+	MassLoad(*CollisArray, "level1.txt", sizeArray);
 	//Â ÊÎÌÌÅÍÒÀÕ ÌÅÃÀ ÄÅÁÀÃ ÌÎÄ!
 	while (running)
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
-		enemyRect = InitObject(enemy->x+30, enemy->y+30, 40, 65);
+		enemyRect = InitObject(enemy->x + 30, enemy->y + 30, 35, 65);
+
 
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
@@ -127,7 +129,7 @@ int main(int argc, char* argv[])
 
 		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
 		if (animate_run) {
-			
+
 			cur_frametime += dt;
 			if (cur_frametime >= max_frametime)
 			{
@@ -143,7 +145,7 @@ int main(int argc, char* argv[])
 		}
 		if (animate_run == false)
 		{
-			
+
 			cur_frametime += dt;
 			if (cur_frametime >= max_frametime)
 			{
@@ -172,9 +174,11 @@ int main(int argc, char* argv[])
 
 
 #pragma endregion
+		
+		
+		PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, playerRect, *CollisArray, sizeArray);
 
-		PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, Rect, Rect1, Rect2, playerRect);
-		HitBox(enemyRect, Rect, Rect1, Rect2, enemy, mainPhys, dt);
+		HitBox(enemyRect, *CollisArray, enemy, mainPhys, dt, sizeArray);
 		if (reload == 1)
 		{
 			free(player);
@@ -184,15 +188,12 @@ int main(int argc, char* argv[])
 		if (debug % 2 == 0)
 		{
 			SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
-			SDL_RenderFillRectF(renderer, Rect);
-
-			SDL_RenderDrawRectF(renderer, Rect);
-			SDL_RenderFillRectF(renderer, Rect1);
-
-			SDL_RenderDrawRectF(renderer, Rect1);
-			SDL_RenderFillRectF(renderer,Rect2);
-
-			SDL_RenderDrawRectF(renderer, Rect2);
+			for (int i = 0; i < sizeArray; i++)
+			{
+				SDL_RenderFillRectF(renderer, *CollisArray+i);
+				SDL_RenderDrawRectF(renderer, *CollisArray+i);
+			}
+			
 			SDL_RenderFillRectF(renderer, playerRect);
 			SDL_RenderFillRectF(renderer, enemyRect);
 
@@ -201,7 +202,6 @@ int main(int argc, char* argv[])
 
 		SDL_RenderPresent(renderer);
 	}
-
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);
 	SDL_DestroyTexture(enemy_tex_idle);
