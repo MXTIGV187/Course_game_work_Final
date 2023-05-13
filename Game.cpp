@@ -69,6 +69,7 @@ int main(int argc, char* argv[])
 	SDL_FRect* CollisArray[100];
 	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
 	SDL_FRect* enemyRect = InitObject(enemy->x, enemy->y, 10, 130);
+	SDL_FRect* enemyRadius = InitObject(enemy->x, enemy->y, 300, 300);
 
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
@@ -81,6 +82,7 @@ int main(int argc, char* argv[])
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
 		enemyRect = InitObject(enemy->x + 30, enemy->y + 30, 35, 65);
+		enemyRadius = InitObject(enemy->x - 100, enemy->y - 85, 300, 300);
 
 
 		SDL_Event event;
@@ -193,14 +195,21 @@ int main(int argc, char* argv[])
 				SDL_RenderFillRectF(renderer, *CollisArray+i);
 				SDL_RenderDrawRectF(renderer, *CollisArray+i);
 			}
-			
 			SDL_RenderFillRectF(renderer, playerRect);
+			SDL_SetRenderDrawColor(renderer, 200, 150, 200, 255);
+			SDL_RenderFillRectF(renderer, enemyRadius);
+			SDL_RenderDrawRectF(renderer, enemyRadius);
+			SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
 			SDL_RenderFillRectF(renderer, enemyRect);
-
 			SDL_RenderDrawRectF(renderer, enemyRect);
 		}
+		if (SDL_HasIntersectionF(enemyRadius, playerRect)) {
+			enemy->x++;
 
+
+		}
 		SDL_RenderPresent(renderer);
+
 	}
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);

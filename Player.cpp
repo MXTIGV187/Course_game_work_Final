@@ -150,8 +150,6 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 				player->x += mainPhys->speed * dt / 1000;
 				player->is_jump = 1;
 			}
-			if (playerRect->x >= CollisRect->x+CollisRect->w)
-				player->x += mainPhys->speed * dt / 1000;
 		}
 
 	}
@@ -166,9 +164,24 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 				player->x -= mainPhys->speed * dt / 1000;
 				player->is_jump = 1;
 			}
-			if (playerRect->x + playerRect->w <= CollisRect->x)
-				player->x -= mainPhys->speed * dt / 1000;
 		}
 	}
 	
+}
+		
+
+void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright) {
+
+	if (isleft) {
+		for (int i = 0; i < sizeArray; i++) {
+			CollisArray[i].x++;
+
+		}
+	}
+	if (isright) {
+		for (int i = 0; i < sizeArray; i++) {
+			CollisArray[i].x--;
+
+		}
+	}
 }
