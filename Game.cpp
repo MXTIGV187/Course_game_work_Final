@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
 
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1);
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	SDL_Rect enemy_rect;
@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
 		if (reload == 1)
 		{
 			free(player);
-			player = PlayerInit(100, 100, 300, 300, 0, 1);
+			player = PlayerInit(100, 100, 300, 300, 0, 1, 0);
 			reload = 0;
 		}
 		if (debug % 2 == 0)

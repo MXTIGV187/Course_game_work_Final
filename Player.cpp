@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "common_parametrs.h"
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump)
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform)
 {
 	Player* player = (Player*)malloc(sizeof(Player));
 	player->hp = hp;
@@ -12,6 +12,7 @@ Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jum
 	player->y = y;
 	player->is_jump = is_jump;
 	player->is_die = is_die;
+	player->upToPlatform = upToPlatform;
 	return player;
 }
 
@@ -44,7 +45,7 @@ void HitBox(SDL_FRect* enemyRect, SDL_FRect* CollisArray, Enemy* enemy, mainPhys
 			enemy->y += mainPhys->gravity * dt / 1000;
 			enemy->is_jump = 1;
 		}
-		
+
 		enemy->is_jump = 0;
 	}
 	else enemy->y += mainPhys->gravity * dt / 1000;
@@ -57,6 +58,7 @@ SDL_FRect* checkCollision(SDL_FRect* playerRect, SDL_FRect* CollisArray, int& si
 		if (SDL_HasIntersectionF(playerRect, &CollisArray[i]))
 		{
 			CollisRect = &CollisArray[i];
+			printf("%d ", i);
 			break;
 		}
 	}
@@ -69,66 +71,104 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 	bool& isdown, bool& isleft, bool& isright, mainPhysics* mainPhys, SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray)
 {
 	SDL_FRect* CollisRect = checkCollision(playerRect, CollisArray, sizeArray);
-		if (SDL_HasIntersectionF(playerRect, CollisRect))
+	if (SDL_HasIntersectionF(playerRect, CollisRect))
+	{
+		if (CollisRect->h != 5)
 		{
-		
+			player->upToPlatform = 0;
 			if (playerRect->y + playerRect->h - 10 > CollisRect->y)
 			{
 				player->y += mainPhys->gravity * dt / 1000;
 				player->is_jump = 1;
+				isup = 0;
 			}
 			last_y = player->y;
 			player->is_jump = 0;
 			dy = 0;
 		}
-
-		if (isup)
+		else
 		{
-			if (player->is_jump == 0)
+			if (playerRect->y + playerRect->h <= CollisRect->y + CollisRect->h && !isup)
 			{
-				player->y -= mainPhys->gravity * dt / 1000;
-				new_y = player->y;
-				dy = last_y - new_y;
-				if (dy >= 300)
-					isup = 0;
-			}
-			else
-			{
-				player->y += mainPhys->gravity * dt / 1000;
+				player->upToPlatform = 1;
 			}
 
+			if (player->upToPlatform == 1)
+			{
+				last_y = player->y;
+				player->is_jump = 0;
+				dy = 0;
+				if ((playerRect->y + playerRect->h) - (CollisRect->y + CollisRect->h) > 10)
+				{
+					player->y += mainPhys->gravity * dt / 1000;
+					player->is_jump = 1;
+					isup = 0;
+				}
+			}
+		}
+
+
+	}
+
+	if (isup)
+	{
+		if (player->is_jump == 0)
+		{
+			player->y -= mainPhys->gravity * dt / 1000;
+			new_y = player->y;
+			dy = last_y - new_y;
+			if (dy >= 300)
+				isup = 0;
 		}
 		else
 		{
-			player->is_jump = 1;
-			if (!SDL_HasIntersectionF(playerRect, CollisRect))
-				player->y += mainPhys->gravity * dt / 1000;
+			player->y += mainPhys->gravity * dt / 1000;
 		}
-		if (isdown) player->y += mainPhys->gravity * dt / 1000;
-		if (isleft)
-		{
-			player->x -= mainPhys->speed * dt / 1000;
-			if (SDL_HasIntersectionF(playerRect, CollisRect))
-			{
-				if (playerRect->y + playerRect->h - 10 > CollisRect->y)
-				{
-					player->x += mainPhys->speed * dt / 1000;
-					player->is_jump = 1;
-				}
-			}
-				
-		}
-		if (isright)
-		{
-			player->x += mainPhys->speed * dt / 1000;
 
-			if (SDL_HasIntersectionF(playerRect, CollisRect))
+	}
+	else
+	{
+		player->is_jump = 1;
+		if (!SDL_HasIntersectionF(playerRect, CollisRect))
+			player->y += mainPhys->gravity * dt / 1000;
+	}
+	if (isdown)
+	{
+		if (SDL_HasIntersectionF(playerRect, CollisRect))
+			if (CollisRect->h == 5.0)
 			{
-				if (playerRect->y + playerRect->h - 10 > CollisRect->y)
-				{
-					player->x -= mainPhys->speed * dt / 1000;
-					player->is_jump = 1;
-				}
+				player->y += 9;
 			}
+	}
+	if (isleft)
+	{
+		player->x -= mainPhys->speed * dt / 1000;
+		if (SDL_HasIntersectionF(playerRect, CollisRect))
+		{
+			if (playerRect->y + playerRect->h - 10 > CollisRect->y && CollisRect->h != 5)
+			{
+				player->x += mainPhys->speed * dt / 1000;
+				player->is_jump = 1;
+			}
+			if (playerRect->x >= CollisRect->x+CollisRect->w)
+				player->x += mainPhys->speed * dt / 1000;
+		}
+
+	}
+	if (isright)
+	{
+		player->x += mainPhys->speed * dt / 1000;
+
+		if (SDL_HasIntersectionF(playerRect, CollisRect))
+		{
+			if (playerRect->y + playerRect->h - 10 > CollisRect->y && CollisRect->h != 5)
+			{
+				player->x -= mainPhys->speed * dt / 1000;
+				player->is_jump = 1;
+			}
+			if (playerRect->x + playerRect->w <= CollisRect->x)
+				player->x -= mainPhys->speed * dt / 1000;
 		}
 	}
+	
+}

@@ -9,7 +9,7 @@ struct Player
 	float y;
 	bool is_die;
 	bool is_jump;
-	//Скины хуины че ещё
+	bool upToPlatform;
 };
 
 struct Enemy
@@ -29,7 +29,7 @@ struct mainPhysics
 };
 
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump);
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform);
 mainPhysics* PhysInit(float speed, float gravity);
 Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump);
 void HitBox(SDL_FRect* enemyRect, SDL_FRect* CollisArray, Enemy* enemy, mainPhysics* mainPhys, int& dt, int& sizeArray);
