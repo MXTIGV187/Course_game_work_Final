@@ -132,3 +132,19 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 			}
 		}
 	}
+
+void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright) {
+
+	if (isleft) {
+		for (int i = 0; i < sizeArray; i++) {
+			CollisArray[i].x++;
+
+		}
+	}
+	if (isright) {
+		for (int i = 0; i < sizeArray; i++) {
+			CollisArray[i].x--;
+
+		}
+	}
+}

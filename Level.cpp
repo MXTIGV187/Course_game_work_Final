@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <stdio.h>
 #include "Level.h"
+#include "Player.h"
 
 SDL_FRect* InitObject(float x, float y, float w, float h)
 {
@@ -62,3 +63,4 @@ SDL_FRect* MassLoad(SDL_FRect*& CollisArray, const char* filename, int& sizeArra
 
 	return CollisArray;
 }
+
