@@ -214,32 +214,42 @@ int main(int argc, char* argv[])
 		if (newtime - lastShotTime >= 300)
 			if (fire)
 			{
-				if (shootRight == 1)
+				if (shootRight || shootLeft || shootUp || shootDown)
 				{
-					direction = DIR_RIGHT;
-					if (shootUp == 1)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0);
-					else if (shootDown == 1)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1);
-					else
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
+					if (shootRight == 1)
+					{
+						direction = DIR_RIGHT;
+						if (shootUp == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0);
+						else if (shootDown == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1);
+						else
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
 
-				}
-				else if (shootLeft == 1)
-				{
-					direction = DIR_LEFT;
-					if (shootUp == 1)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0);
+					}
+					else if (shootLeft == 1)
+					{
+						direction = DIR_LEFT;
+						if (shootUp == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0);
+						else if (shootDown == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1);
+						else
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
+					}
+					else if (shootUp == 1)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0);
 					else if (shootDown == 1)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1);
-					else
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1);
 				}
-				else if (shootUp == 1)
-					bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0);
-				else if (shootDown == 1)
-					bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1);
-				lastShotTime = SDL_GetTicks();
+				else
+				{
+					if (direction == DIR_LEFT)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
+					if (direction == DIR_RIGHT)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
+				}
+					lastShotTime = SDL_GetTicks();
 			}
 		for (int i = 1; i < 10; i++)
 			if (bullet[i] != NULL)
