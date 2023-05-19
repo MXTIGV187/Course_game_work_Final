@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <stdio.h>
+#include <math.h>
 #include "Level.h"
 #include "Player.h"
 
@@ -63,4 +64,5 @@ SDL_FRect* MassLoad(SDL_FRect*& CollisArray, const char* filename, int& sizeArra
 
 	return CollisArray;
 }
+
 
