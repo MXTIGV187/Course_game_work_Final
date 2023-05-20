@@ -1,16 +1,14 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "common_parametrs.h"
 #include "functions.h"
 #include "Player.h"
 #include "Weapon.h"
 #include "Animation.h"
 #include "Level.h"
-
-
-#define DIR_RIGHT 1
-#define DIR_LEFT  2
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -19,8 +17,9 @@ frameAnim* Run;
 
 int main(int argc, char* argv[])
 {
+	srand(time(NULL));
 	SDL_Rect dst_rect = { 0,0,0,0 };
-	SDL_Rect dst_enem_rect = { 0,0,0,0 };
+	SDL_Rect dst_enem_rect[100] = {0,0,0,0};
 	bool running = 1;
 	Init(&window, &renderer, &screen_surface);
 
@@ -40,11 +39,14 @@ int main(int argc, char* argv[])
 	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
+	Enemy* enemy[100];
+	for (int i = 0; i < 5; i++)
+		enemy[i] = EnemyInit(100, rand() % 1000, 350, 0, 0);
+
 	SDL_Rect enemy_rect;
 	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect, window, renderer, screen_surface);
 	enemy_rect.w = enemy_rect.h;
-
-	Enemy* enemy = EnemyInit(100, 340, 350, 0, 0);
+	
 
 	Uint32 lastShotTime = SDL_GetTicks();
 	Bullet* bullet[10];
@@ -84,8 +86,13 @@ int main(int argc, char* argv[])
 
 	SDL_FRect* CollisArray[100];
 	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
-	SDL_FRect* enemyRect = InitObject(enemy->x, enemy->y, 10, 130);
-	SDL_FRect* enemyRadius = InitObject(enemy->x, enemy->y, 300, 300);
+	SDL_FRect* enemyRadius[100];
+	SDL_FRect* enemyRect[100];
+	for (int i = 0; i < 5; i++)
+	{
+		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+	}
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
 
@@ -97,10 +104,13 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
-		if (enemyRect != NULL)
-			enemyRect = InitObject(enemy->x + 30, enemy->y + 30, 35, 65);
-		if (enemyRadius != NULL)
-			enemyRadius = InitObject(enemy->x - 100, enemy->y - 85, 400, 400);
+		for (int i = 0; i < 5; i++)
+		{
+			if (enemyRect[i] != NULL)
+				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
+			if (enemyRadius[i] != NULL)
+				enemyRadius[i] = InitObject(enemy[i]->x - 100, enemy[i]->y - 85, 400, 400);
+		}
 
 
 		SDL_Event event;
@@ -147,8 +157,9 @@ int main(int argc, char* argv[])
 		}
 
 		animate_run = isleft || isright;
-		if (enemy != NULL)
-			dst_enem_rect = { (int)enemy->x,(int)enemy->y,enemy_rect.w,enemy_rect.h };
+		for (int i = 0; i < 5; i++)
+			if (enemy[i] != NULL)
+				dst_enem_rect[i] = {(int)enemy[i]->x,(int)enemy[i]->y,enemy_rect.w,enemy_rect.h};
 
 		dst_rect = { (int)player->x,(int)player->y,player_rect.w,player_rect.h };
 		Tickrate(lasttime, newtime, dt);
@@ -189,28 +200,30 @@ int main(int argc, char* argv[])
 				SDL_RenderCopyEx(renderer, player_tex_idle, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
 		}
-		if (enemy != NULL)
-		{
-			if (running) {
+		for (int i = 0; i < 5; i++)
+			if (enemy[i] != NULL)
+			{
+				if (running) {
 
-				cur_frametime += dt;
-				SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect, &dst_enem_rect);
-				if (cur_frametime >= max_frametime)
-				{
-					cur_frametime -= max_frametime;
-					frame = (frame + 1) % frame_count;
-					enemy_rect.x = enemy_rect.w * frame;
+					cur_frametime += dt;
+					SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect, &dst_enem_rect[i]);
+					if (cur_frametime >= max_frametime)
+					{
+						cur_frametime -= max_frametime;
+						frame = (frame + 1) % frame_count;
+						enemy_rect.x = enemy_rect.w * frame;
+					}
 				}
 			}
-		}
 
 
 #pragma endregion
 
 
 		PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, playerRect, *CollisArray, sizeArray);
-		if (enemy != NULL)
-			EnemyMove(enemy, enemyRadius, playerRect, enemyRect, mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
+		for (int i = 0; i < 5; i++)
+			if (enemy[i] != NULL)
+				EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
 		if (newtime - lastShotTime >= 300)
 			if (fire)
 			{
@@ -249,7 +262,7 @@ int main(int argc, char* argv[])
 					if (direction == DIR_RIGHT)
 						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
 				}
-					lastShotTime = SDL_GetTicks();
+				lastShotTime = SDL_GetTicks();
 			}
 		for (int i = 1; i < 10; i++)
 			if (bullet[i] != NULL)
@@ -275,33 +288,31 @@ int main(int argc, char* argv[])
 				if (bullet[i]->down == 1)
 					bullet[i]->y += bullet[i]->speed * dt / 1000;
 				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
-				if (enemy != NULL)
-				{
-					if (bulletRect[i]->x < enemyRect->x + enemyRect->w &&
-						bulletRect[i]->x + bulletRect[i]->w > enemyRect->x &&
-						bulletRect[i]->y < enemyRect->y + enemyRect->h &&
-						bulletRect[i]->y + bulletRect[i]->h > enemyRect->y)
+				for (int j = 0; j < 5; j++)
+					if (enemy[j] != NULL)
 					{
-						enemy->hp -= 30;
-						bullet[i] = NULL;
-						bulletRect[i] = NULL;
-						free(bullet[i]);
-						free(bulletRect[i]);
-
-						if (enemy->hp <= 0)
+						if (SDL_HasIntersectionF(bulletRect[i], enemyRect[j]))
 						{
-							enemy->is_die = 1;
-							player->score += 50;
-							player->killEnemy++;
-							enemy = NULL;
-							enemyRect = NULL;
-							enemyRadius = NULL;
-							free(enemy);
-							free(enemyRect);
-							free(enemyRadius);
+							enemy[j]->hp -= 30;
+							bullet[i] = NULL;
+							bulletRect[i] = NULL;
+							free(bullet[i]);
+							free(bulletRect[i]);
+
+							if (enemy[j]->hp <= 0)
+							{
+								enemy[j]->is_die = 1;
+								player->score += 50;
+								player->killEnemy++;
+								enemy[j] = NULL;
+								enemyRect[j] = NULL;
+								enemyRadius[j] = NULL;
+								free(enemy[j]);
+								free(enemyRect[j]);
+								free(enemyRadius[j]);
+							}
 						}
 					}
-				}
 			}
 
 		if (n >= 9)
@@ -324,17 +335,19 @@ int main(int argc, char* argv[])
 			}
 			//SDL_RenderFillRectF(renderer, playerRect);
 			SDL_SetRenderDrawColor(renderer, 200, 150, 200, 255);
-			if (enemyRadius != NULL)
-			{
-				SDL_RenderFillRectF(renderer, enemyRadius);
-				SDL_RenderDrawRectF(renderer, enemyRadius);
-			}
+			for (int i = 0; i < 5; i++)
+				if (enemyRadius[i] != NULL)
+				{
+					SDL_RenderFillRectF(renderer, enemyRadius[i]);
+					SDL_RenderDrawRectF(renderer, enemyRadius[i]);
+				}
 			SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
-			if (enemyRadius != NULL)
-			{
-				SDL_RenderFillRectF(renderer, enemyRect);
-				SDL_RenderDrawRectF(renderer, enemyRect);
-			}
+			for (int i = 0; i < 5; i++)
+				if (enemyRect[i] != NULL)
+				{
+					SDL_RenderFillRectF(renderer, enemyRect[i]);
+					SDL_RenderDrawRectF(renderer, enemyRect[i]);
+				}
 			for (int i = 1; i < 10; i++)
 			{
 				if (bulletRect[i] != NULL)
@@ -349,6 +362,7 @@ int main(int argc, char* argv[])
 
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);
+
 	SDL_DestroyTexture(enemy_tex_idle);
 	SDL_DestroyTexture(back_tex);
 	Quit(&window, &renderer, &screen_surface);

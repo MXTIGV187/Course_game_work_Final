@@ -22,7 +22,6 @@ struct Enemy
 	bool is_jump;
 	bool is_jump_right;
 	bool is_jump_left;
-
 };
 
 struct mainPhysics
