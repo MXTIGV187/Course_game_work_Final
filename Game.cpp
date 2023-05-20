@@ -10,6 +10,8 @@
 #include "Animation.h"
 #include "Level.h"
 
+#define ZOMBIE_COUNT 7
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* screen_surface = NULL;
@@ -40,8 +42,8 @@ int main(int argc, char* argv[])
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
-	for (int i = 0; i < 5; i++)
-		enemy[i] = EnemyInit(100, rand() % 1000, 350, 0, 0);
+	for (int i = 0; i < ZOMBIE_COUNT; i++)
+		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0);
 
 	SDL_Rect enemy_rect;
 	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect, window, renderer, screen_surface);
@@ -88,7 +90,7 @@ int main(int argc, char* argv[])
 	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
 	SDL_FRect* enemyRadius[100];
 	SDL_FRect* enemyRect[100];
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < ZOMBIE_COUNT; i++)
 	{
 		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
 		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
@@ -104,7 +106,7 @@ int main(int argc, char* argv[])
 	while (running)
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < ZOMBIE_COUNT; i++)
 		{
 			if (enemyRect[i] != NULL)
 				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
@@ -157,7 +159,7 @@ int main(int argc, char* argv[])
 		}
 
 		animate_run = isleft || isright;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < ZOMBIE_COUNT; i++)
 			if (enemy[i] != NULL)
 				dst_enem_rect[i] = {(int)enemy[i]->x,(int)enemy[i]->y,enemy_rect.w,enemy_rect.h};
 
@@ -200,7 +202,7 @@ int main(int argc, char* argv[])
 				SDL_RenderCopyEx(renderer, player_tex_idle, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
 		}
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < ZOMBIE_COUNT; i++)
 			if (enemy[i] != NULL)
 			{
 				if (running) {
@@ -221,7 +223,7 @@ int main(int argc, char* argv[])
 
 
 		PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, playerRect, *CollisArray, sizeArray);
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < ZOMBIE_COUNT; i++)
 			if (enemy[i] != NULL)
 				EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
 		if (newtime - lastShotTime >= 300)
@@ -271,24 +273,24 @@ int main(int argc, char* argv[])
 				{
 					bullet[i]->x += bullet[i]->speed * dt / 1000;
 					if (bullet[i]->up == 1)
-						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+						bullet[i]->y -= bullet[i]->speed/2 * dt / 1000;
 					if (bullet[i]->down == 1)
-						bullet[i]->y += bullet[i]->speed * dt / 1000;
+						bullet[i]->y += bullet[i]->speed/2 * dt / 1000;
 				}
 				if (bullet[i]->left == 1)
 				{
 					bullet[i]->x -= bullet[i]->speed * dt / 1000;
 					if (bullet[i]->up == 1)
-						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+						bullet[i]->y -= bullet[i]->speed/2 * dt / 1000;
 					if (bullet[i]->down == 1)
-						bullet[i]->y += bullet[i]->speed * dt / 1000;
+						bullet[i]->y += bullet[i]->speed/2 * dt / 1000;
 				}
 				if (bullet[i]->up == 1)
 					bullet[i]->y -= bullet[i]->speed * dt / 1000;
 				if (bullet[i]->down == 1)
 					bullet[i]->y += bullet[i]->speed * dt / 1000;
 				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
-				for (int j = 0; j < 5; j++)
+				for (int j = 0; j < ZOMBIE_COUNT; j++)
 					if (enemy[j] != NULL)
 					{
 						if (SDL_HasIntersectionF(bulletRect[i], enemyRect[j]))
@@ -335,14 +337,14 @@ int main(int argc, char* argv[])
 			}
 			//SDL_RenderFillRectF(renderer, playerRect);
 			SDL_SetRenderDrawColor(renderer, 200, 150, 200, 255);
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < ZOMBIE_COUNT; i++)
 				if (enemyRadius[i] != NULL)
 				{
 					SDL_RenderFillRectF(renderer, enemyRadius[i]);
 					SDL_RenderDrawRectF(renderer, enemyRadius[i]);
 				}
 			SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < ZOMBIE_COUNT; i++)
 				if (enemyRect[i] != NULL)
 				{
 					SDL_RenderFillRectF(renderer, enemyRect[i]);
