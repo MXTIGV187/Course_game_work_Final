@@ -7,6 +7,7 @@
 #include "Weapon.h"
 #include "Animation.h"
 #include "Level.h"
+#include <SDL_mouse.h>
 
 
 #define DIR_RIGHT 1
@@ -21,7 +22,8 @@ int main(int argc, char* argv[])
 {
 	SDL_Rect dst_rect = { 0,0,0,0 };
 	SDL_Rect dst_enem_rect = { 0,0,0,0 };
-	bool running = 1;
+	bool running = 0;
+	bool main_menu = 1;
 	Init(&window, &renderer, &screen_surface);
 
 	int direction = 0;
@@ -47,8 +49,20 @@ int main(int argc, char* argv[])
 	Enemy* enemy = EnemyInit(100, 340, 350, 0, 0);
 
 	Uint32 lastShotTime = SDL_GetTicks();
+
 	Bullet* bullet[10];
 	SDL_FRect* bulletRect[10];
+	
+	SDL_Rect bullet_rect;
+	SDL_Texture* bullet_tex = loadTextureFromFile("bullet1.png", &bullet_rect, window, renderer, screen_surface);
+
+	SDL_Rect logo_rect;
+	SDL_Texture* logo_tex = loadTextureFromFile("contra-logo.png", &logo_rect, window, renderer, screen_surface);
+
+	SDL_Texture* fire_tex = loadTextureFromFile("Shot_1.png", &player_rect, window, renderer, screen_surface);
+	player_rect.w = player_rect.h;
+
+
 	int n = 0;
 	bool shootUp = 0;
 	bool shootDown = 0;
@@ -62,6 +76,9 @@ int main(int argc, char* argv[])
 	}
 
 	bool isup = 0, isdown = 0, isleft = 0, isright = 0, fire = 0;
+	bool LeftButton = 0;
+	int mouseX;
+	int mouseY;
 
 	float dy = 0, last_y = 0, new_y = 0;
 	float last_enemy_y = 0, new_enemy_y = 0, dy_enemy = 0;
@@ -75,6 +92,7 @@ int main(int argc, char* argv[])
 
 	int frame = 0;
 	int frame_count = 6;
+	int frame_count_shoot = 4;
 	int cur_frametime = 0;
 	int max_frametime = 1000 / 10;
 
@@ -86,12 +104,97 @@ int main(int argc, char* argv[])
 	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
 	SDL_FRect* enemyRect = InitObject(enemy->x, enemy->y, 10, 130);
 	SDL_FRect* enemyRadius = InitObject(enemy->x, enemy->y, 300, 300);
+
+	SDL_Rect RectPlay;
+	SDL_Rect RectExit;
+	
+
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
 
 	int sizeArray = 0;
 
 	MassLoad(*CollisArray, "level1.txt", sizeArray);
+
+	while (main_menu)
+	{
+		SDL_RenderCopy(renderer, logo_tex, &logo_rect, NULL);
+		RectPlay.x = 860; RectPlay.y = 700; RectPlay.h = 100; RectPlay.w = 400;
+		
+		SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+		SDL_RenderFillRect(renderer, &RectPlay);
+		SDL_RenderDrawRect(renderer, &RectPlay);
+		
+		RectExit.x = 860; RectExit.y = 900; RectExit.h = 100; RectExit.w = 400;
+		SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+		SDL_RenderFillRect(renderer, &RectExit);
+		SDL_RenderDrawRect(renderer, &RectExit);
+		
+		
+		SDL_Event event_menu;
+		while (SDL_PollEvent(&event_menu))
+		{
+			if (event_menu.type == SDL_QUIT)
+			{
+				running = 0;
+			}
+
+			switch (event_menu.type)
+			{
+			case SDL_KEYDOWN:
+				switch (event_menu.key.keysym.scancode)
+				{
+				case SDL_SCANCODE_SPACE: LeftButton = 1; break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch (event_menu.key.keysym.scancode)
+				{
+				case SDL_SCANCODE_SPACE: LeftButton = 0; break;
+				}
+				break;
+			}
+		}
+		SDL_GetMouseState(&mouseX, &mouseY);
+		SDL_Point point;
+		point.x = mouseX; point.y = mouseY;
+
+		if (SDL_PointInRect(&point, &RectExit))
+		{
+
+			SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+			SDL_RenderFillRect(renderer, &RectExit);
+		}
+
+		
+
+		if (SDL_PointInRect(&point, &RectPlay))
+		{
+
+			SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+			SDL_RenderFillRect(renderer, &RectPlay);
+
+		}
+
+
+		if (SDL_PointInRect(&point, &RectPlay) && LeftButton==1)
+		{
+			
+			main_menu = 0;
+			running = 1;
+		}
+		if (SDL_PointInRect(&point, &RectExit) && LeftButton == 1)
+		{
+			main_menu = 0;
+		}
+
+
+		
+		
+		SDL_RenderPresent(renderer);
+
+
+	}
 
 
 	while (running)
@@ -146,7 +249,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		animate_run = isleft || isright;
+		animate_run = isleft || isright || isup || isdown;
 		if (enemy != NULL)
 			dst_enem_rect = { (int)enemy->x,(int)enemy->y,enemy_rect.w,enemy_rect.h };
 
@@ -158,6 +261,8 @@ int main(int argc, char* argv[])
 		SDL_RenderClear(renderer);
 
 		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
+
+
 		if (animate_run) {
 
 			cur_frametime += dt;
@@ -173,7 +278,24 @@ int main(int argc, char* argv[])
 				SDL_RenderCopyEx(renderer, player_tex_run, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
 		}
-		if (animate_run == false)
+
+		else if (fire && animate_run)
+		{
+			cur_frametime += dt;
+			if (cur_frametime >= max_frametime)
+			{
+				cur_frametime -= max_frametime;
+				frame = (frame + 1) % frame_count_shoot;
+				player_rect.x = player_rect.w * frame;
+			}
+			if (direction == DIR_RIGHT)
+				SDL_RenderCopy(renderer, fire_tex, &player_rect, &dst_rect);
+			else
+				SDL_RenderCopyEx(renderer, fire_tex, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
+
+		}
+
+		else if ((animate_run || fire) ==  false)
 		{
 
 			cur_frametime += dt;
@@ -187,6 +309,22 @@ int main(int argc, char* argv[])
 				SDL_RenderCopy(renderer, player_tex_idle, &player_rect, &dst_rect);
 			else
 				SDL_RenderCopyEx(renderer, player_tex_idle, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
+
+		}
+		else if (fire != NULL)
+		{
+			
+			cur_frametime += dt;
+			if (cur_frametime >= max_frametime)
+			{
+				cur_frametime -= max_frametime;
+				frame = (frame + 1) % frame_count_shoot;
+				player_rect.x = player_rect.w * frame;
+			}
+			if (direction == DIR_RIGHT)
+				SDL_RenderCopy(renderer, fire_tex, &player_rect, &dst_rect);
+			else
+				SDL_RenderCopyEx(renderer, fire_tex, &player_rect, &dst_rect, 0, NULL, SDL_FLIP_HORIZONTAL);
 
 		}
 		if (enemy != NULL)
@@ -254,27 +392,44 @@ int main(int argc, char* argv[])
 		for (int i = 1; i < 10; i++)
 			if (bullet[i] != NULL)
 			{
+				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
 				if (bullet[i]->right == 1)
 				{
 					bullet[i]->x += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 					if (bullet[i]->up == 1)
 						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 					if (bullet[i]->down == 1)
 						bullet[i]->y += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					
 				}
 				if (bullet[i]->left == 1)
 				{
 					bullet[i]->x -= bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 					if (bullet[i]->up == 1)
 						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 					if (bullet[i]->down == 1)
 						bullet[i]->y += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 				}
 				if (bullet[i]->up == 1)
 					bullet[i]->y -= bullet[i]->speed * dt / 1000;
+				bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 				if (bullet[i]->down == 1)
 					bullet[i]->y += bullet[i]->speed * dt / 1000;
-				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
+				bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 				if (enemy != NULL)
 				{
 					if (bulletRect[i]->x < enemyRect->x + enemyRect->w &&
@@ -303,6 +458,8 @@ int main(int argc, char* argv[])
 					}
 				}
 			}
+
+		
 
 		if (n >= 9)
 			n = 1;

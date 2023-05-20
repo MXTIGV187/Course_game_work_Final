@@ -83,4 +83,6 @@ SDL_Texture* loadTextureFromFile(const char* filename, SDL_Rect* rect, SDL_Windo
 	*rect = { 0,0,surface->w,surface->h };
 	SDL_FreeSurface(surface);
 	return texture;
-}
+	}
+
+
