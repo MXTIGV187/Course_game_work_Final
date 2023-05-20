@@ -419,12 +419,18 @@ int main(int argc, char* argv[])
 						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 						if (bullet[i]->up == 1)
+						{
 							bullet[i]->y -= bullet[i]->speed * dt / 1000;
+							bullet[i]->x += 500 * dt / 1000;
+						}
 						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 						bullet[i]->y -= bullet[i]->speed / 2 * dt / 1000;
 						if (bullet[i]->down == 1)
+						{
 							bullet[i]->y += bullet[i]->speed * dt / 1000;
+							bullet[i]->x += 500 * dt / 1000;
+						}
 						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 
@@ -436,12 +442,18 @@ int main(int argc, char* argv[])
 						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 						if (bullet[i]->up == 1)
+						{
 							bullet[i]->y -= bullet[i]->speed * dt / 1000;
+							bullet[i]->x -= 500 * dt / 1000;
+						}
 						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 						bullet[i]->y -= bullet[i]->speed / 2 * dt / 1000;
 						if (bullet[i]->down == 1)
+						{
 							bullet[i]->y += bullet[i]->speed * dt / 1000;
+							bullet[i]->x -= 500 * dt / 1000;
+						}
 						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 						bullet[i]->y += bullet[i]->speed / 2 * dt / 1000;
@@ -539,3 +551,12 @@ int main(int argc, char* argv[])
 		Quit(&window, &renderer, &screen_surface);
 		return 0;
 }
+
+/*
+ПН: Виды оружия, виды противников
+ВТ: 3 уровня, всё в файлы перенести
+ЧТ: Сейвы и запись рекордов
+
+ПТ: Босс, точки уязвимрсти.
+Подбираемые бонусы оружия
+*/
