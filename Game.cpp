@@ -11,10 +11,8 @@
 #include "Level.h"
 #include <SDL_mouse.h>
 
-#define DIR_LEFT 2
-#define DIR_RIGHT 1
 
-#define ZOMBIE_COUNT 7
+
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -42,8 +40,10 @@ int main(int argc, char* argv[])
 
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
-
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0);
+	//
+	Weapon* weapon = spawn_weapon(Rifle, 1, "Rifle", 100, 100, 100);
+	//
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
 
 	Uint32 lastShotTime = SDL_GetTicks();
 
-	Bullet* bullet[10];
-	SDL_FRect* bulletRect[10];
+	Bullet* bullet[50];
+	SDL_FRect* bulletRect[50];
 
 	SDL_Rect bullet_rect;
 	SDL_Texture* bullet_tex = loadTextureFromFile("bullet1.png", &bullet_rect, window, renderer, screen_surface);
@@ -68,67 +68,11 @@ int main(int argc, char* argv[])
 
 	SDL_Texture* fire_tex = loadTextureFromFile("Shot_1.png", &player_rect, window, renderer, screen_surface);
 	player_rect.w = player_rect.h;
-
-
-	int n = 0;
-	bool shootUp = 0;
-	bool shootDown = 0;
-	bool shootLeft = 0;
-	bool shootRight = 0;
-
-	for (int i = 0; i < 10; i++)
-	{
-		bullet[i] = NULL;
-		bulletRect[i] = NULL;
-	}
-
-	bool isup = 0, isdown = 0, isleft = 0, isright = 0, fire = 0;
 	bool LeftButton = 0;
 	int mouseX;
 	int mouseY;
-
-	float dy = 0, last_y = 0, new_y = 0;
-	float last_enemy_y = 0, new_enemy_y = 0, dy_enemy = 0;
-
-	bool animate_run = true;
-	bool animate_idle = true;
-
-	int lasttime = SDL_GetTicks();
-	int newtime;
-	int dt = 0;
-
-	int frame = 0;
-	int frame_count = 6;
-	int frame_count_shoot = 4;
-	int cur_frametime = 0;
-	int max_frametime = 1000 / 10;
-
-	bool reload = 0;
-	int debug = 1;
-
-
-	SDL_FRect* CollisArray[100];
-	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
-	SDL_FRect* enemyRect[100];
-	SDL_FRect* enemyRadius[100];
-
 	SDL_Rect RectPlay;
 	SDL_Rect RectExit;
-
-
-
-	for (int i = 0; i < ZOMBIE_COUNT; i++)
-	{
-		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
-		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
-	}
-	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
-	SDL_RenderClear(renderer);
-
-	int sizeArray = 0;
-
-	MassLoad(*CollisArray, "level1.txt", sizeArray);
-
 	while (main_menu)
 	{
 		SDL_RenderCopy(renderer, logo_tex, &logo_rect, NULL);
@@ -208,6 +152,60 @@ int main(int argc, char* argv[])
 
 
 	}
+
+	int n = 0;
+	bool shootUp = 0;
+	bool shootDown = 0;
+	bool shootLeft = 0;
+	bool shootRight = 0;
+
+	for (int i = 0; i < 50; i++)
+	{
+		bullet[i] = NULL;
+		bulletRect[i] = NULL;
+	}
+
+	bool isup = 0, isdown = 0, isleft = 0, isright = 0, fire = 0;
+
+	float dy = 0, last_y = 0, new_y = 0;
+	float last_enemy_y = 0, new_enemy_y = 0, dy_enemy = 0;
+
+	bool animate_run = true;
+	bool animate_idle = true;
+
+	int lasttime = SDL_GetTicks();
+	int newtime;
+	int dt = 0;
+
+	int frame = 0;
+	int frame_count = 6;
+	int frame_count_shoot = 4;
+	int cur_frametime = 0;
+	int max_frametime = 1000 / 10;
+
+	bool reload = 0;
+	int debug = 1;
+
+	SDL_FRect* CollisArray[100];
+	SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
+	SDL_FRect* enemyRect[100];
+	SDL_FRect* enemyRadius[100];
+
+
+
+
+	for (int i = 0; i < ZOMBIE_COUNT; i++)
+	{
+		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+	}
+	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+	SDL_RenderClear(renderer);
+
+	int sizeArray = 0;
+
+	MassLoad(*CollisArray, "level1.txt", sizeArray);
+
 
 
 	while (running)
@@ -369,141 +367,11 @@ int main(int argc, char* argv[])
 			for (int i = 0; i < ZOMBIE_COUNT; i++)
 				if (enemy[i] != NULL)
 					EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
-			if (newtime - lastShotTime >= 300)
-				if (fire)
-				{
-					if (shootRight || shootLeft || shootUp || shootDown)
-					{
-						if (shootRight == 1)
-						{
-							direction = DIR_RIGHT;
-							if (shootUp == 1)
-								bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0);
-							else if (shootDown == 1)
-								bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1);
-							else
-								bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
-
-						}
-						else if (shootLeft == 1)
-						{
-							direction = DIR_LEFT;
-							if (shootUp == 1)
-								bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0);
-							else if (shootDown == 1)
-								bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1);
-							else
-								bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
-						}
-						else if (shootUp == 1)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0);
-						else if (shootDown == 1)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1);
-					}
-					else
-					{
-						if (direction == DIR_LEFT)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
-						if (direction == DIR_RIGHT)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
-					}
-					lastShotTime = SDL_GetTicks();
-				}
-			for (int i = 1; i < 10; i++)
-				if (bullet[i] != NULL)
-				{
-					bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
-					if (bullet[i]->right == 1)
-					{
-						bullet[i]->x += bullet[i]->speed * dt / 1000;
-						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-						if (bullet[i]->up == 1)
-						{
-							bullet[i]->y -= bullet[i]->speed * dt / 1000;
-							bullet[i]->x += 500 * dt / 1000;
-						}
-						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-						bullet[i]->y -= bullet[i]->speed / 2 * dt / 1000;
-						if (bullet[i]->down == 1)
-						{
-							bullet[i]->y += bullet[i]->speed * dt / 1000;
-							bullet[i]->x += 500 * dt / 1000;
-						}
-						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-
-						bullet[i]->y += bullet[i]->speed / 2 * dt / 1000;
-					}
-					if (bullet[i]->left == 1)
-					{
-						bullet[i]->x -= bullet[i]->speed * dt / 1000;
-						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-						if (bullet[i]->up == 1)
-						{
-							bullet[i]->y -= bullet[i]->speed * dt / 1000;
-							bullet[i]->x -= 500 * dt / 1000;
-						}
-						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-						bullet[i]->y -= bullet[i]->speed / 2 * dt / 1000;
-						if (bullet[i]->down == 1)
-						{
-							bullet[i]->y += bullet[i]->speed * dt / 1000;
-							bullet[i]->x -= 500 * dt / 1000;
-						}
-						bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-						SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-						bullet[i]->y += bullet[i]->speed / 2 * dt / 1000;
-					}
-					if (bullet[i]->up == 1)
-						bullet[i]->y -= bullet[i]->speed * dt / 1000;
-					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-					if (bullet[i]->down == 1)
-						bullet[i]->y += bullet[i]->speed * dt / 1000;
-					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-					bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
-					for (int j = 0; j < ZOMBIE_COUNT; j++)
-						if (enemy[j] != NULL)
-						{
-							if (SDL_HasIntersectionF(bulletRect[i], enemyRect[j]))
-							{
-								enemy[j]->hp -= 30;
-								bullet[i] = NULL;
-								bulletRect[i] = NULL;
-								free(bullet[i]);
-								free(bulletRect[i]);
-
-								if (enemy[j]->hp <= 0)
-								{
-									enemy[j]->is_die = 1;
-									player->score += 50;
-									player->killEnemy++;
-									enemy[j] = NULL;
-									enemyRect[j] = NULL;
-									enemyRadius[j] = NULL;
-									free(enemy[j]);
-									free(enemyRect[j]);
-									free(enemyRadius[j]);
-								}
-							}
-						}
-				}
-
-
-
-			if (n >= 9)
-				n = 1;
-
-
+			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex);
 			if (reload == 1)
 			{
 				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0);
+				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
 				reload = 0;
 			}
 			if (debug % 2 == 0)
@@ -543,17 +411,15 @@ int main(int argc, char* argv[])
 
 
 	}
-		SDL_DestroyTexture(player_tex_run);
-		SDL_DestroyTexture(player_tex_idle);
-
-		SDL_DestroyTexture(enemy_tex_idle);
-		SDL_DestroyTexture(back_tex);
-		Quit(&window, &renderer, &screen_surface);
-		return 0;
+	SDL_DestroyTexture(player_tex_run);
+	SDL_DestroyTexture(player_tex_idle);
+	SDL_DestroyTexture(enemy_tex_idle);
+	SDL_DestroyTexture(back_tex);
+	Quit(&window, &renderer, &screen_surface);
+	return 0;
 }
-
 /*
-ПН: Виды оружия, виды противников
+ПН: Виды 4 оружия, виды 3 противников
 ВТ: 3 уровня, всё в файлы перенести
 ЧТ: Сейвы и запись рекордов
 

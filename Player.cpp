@@ -1,9 +1,9 @@
-#include <SDL.h>
+
 #include <stdio.h>
 #include "Player.h"
 #include "common_parametrs.h"
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy)
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon)
 {
 	Player* player = (Player*)malloc(sizeof(Player));
 	player->hp = hp;
@@ -14,6 +14,7 @@ Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jum
 	player->is_jump = is_jump;
 	player->is_die = is_die;
 	player->upToPlatform = upToPlatform;
+	player->weapon = weapon;
 	return player;
 }
 

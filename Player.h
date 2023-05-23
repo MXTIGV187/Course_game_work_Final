@@ -1,6 +1,8 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 #include <SDL.h>
+#include "Weapon.h"
+struct Weapon;
 struct Player
 {
 	int hp;
@@ -11,6 +13,7 @@ struct Player
 	bool is_die;
 	bool is_jump;
 	bool upToPlatform;
+	Weapon* weapon;
 };
 
 struct Enemy
@@ -43,7 +46,7 @@ struct Bullet
 };
 
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy);
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon);
 mainPhysics* PhysInit(float speed, float gravity);
 Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump);
 Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down);

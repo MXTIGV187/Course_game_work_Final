@@ -7,6 +7,13 @@
 #define WINDOW_HEIGHT 1080
 
 
+#define DIR_RIGHT 1
+#define DIR_LEFT  2
+#define DIR_LEFT 2
+#define DIR_RIGHT 1
+
+#define ZOMBIE_COUNT 1
+
 /*
 * рср мсфмн опндхтюимхрэ пюулепш нймю
 * йнкхвеярбн тоя
