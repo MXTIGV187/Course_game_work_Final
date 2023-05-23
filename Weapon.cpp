@@ -645,7 +645,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 
 
 
-	if (n >= 48)
+	if (n >= 41)
 	{
 		n = 0;
 	}

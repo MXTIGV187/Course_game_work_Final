@@ -374,7 +374,7 @@ int main(int argc, char* argv[])
 			if (reload == 1)
 			{
 				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
+				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, boomgun);
 				reload = 0;
 			}
 			if (debug % 2 == 0)
