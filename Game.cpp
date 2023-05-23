@@ -23,6 +23,9 @@ int main(int argc, char* argv[])
 {
 	srand(time(NULL));
 	SDL_Rect dst_rect = { 0,0,0,0 };
+	
+	SDL_Rect dst_rect_shotgun = { 0,0,0,0 };
+
 	bool running = 0;
 	bool main_menu = 1;
 	SDL_Rect dst_enem_rect[100] = { 0,0,0,0 };
@@ -41,7 +44,14 @@ int main(int argc, char* argv[])
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
 	//
-	Weapon* weapon = spawn_weapon(Rifle, 1, "Rifle", 100, 100, 100);
+	Weapon* weapon = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
+	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 100, 100, 100);
+	SDL_Rect shotgun_rect;
+	SDL_Texture* shotgun_tex = loadTextureFromFile("shotgun.png", &shotgun_rect, window, renderer, screen_surface);
+	shotgun_rect.h = 70; shotgun_rect.w = 70;
+	shotgun_rect.x = 150; shotgun_rect.y = 680;
+	SDL_FRect* shotgun_frect = InitObject(150, 680, 70, 70);
+
 	//
 	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
 	mainPhysics* mainPhys = PhysInit(150, 250);
@@ -277,6 +287,8 @@ int main(int argc, char* argv[])
 
 		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
 
+		dst_rect_shotgun = { shotgun_rect.x,shotgun_rect.y,shotgun_rect.w,shotgun_rect.h };
+		SDL_RenderCopy(renderer, shotgun_tex,	NULL, &dst_rect_shotgun);
 
 		if (animate_run) {
 
@@ -368,6 +380,18 @@ int main(int argc, char* argv[])
 				if (enemy[i] != NULL)
 					EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
 			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex);
+
+			if (SDL_HasIntersectionF(playerRect,shotgun_frect))
+			{
+				player->weapon = shotgun;
+				SDL_DestroyTexture(shotgun_tex);
+				
+
+
+
+
+			}
+
 			if (reload == 1)
 			{
 				free(player);
@@ -408,7 +432,7 @@ int main(int argc, char* argv[])
 			}
 			SDL_RenderPresent(renderer);
 		}
-
+		
 
 	}
 	SDL_DestroyTexture(player_tex_run);
