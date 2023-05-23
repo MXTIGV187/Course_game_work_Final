@@ -30,34 +30,34 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 					{
 						direction = DIR_RIGHT;
 						if (shootUp == 1)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0);
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0, true);
 						else if (shootDown == 1)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1);
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1, true);
 						else
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0, true);
 
 					}
 					else if (shootLeft == 1)
 					{
 						direction = DIR_LEFT;
 						if (shootUp == 1)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0);
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0, true);
 						else if (shootDown == 1)
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1);
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1, true);
 						else
-							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0, true);
 					}
 					else if (shootUp == 1)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0, true);
 					else if (shootDown == 1)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1, true);
 				}
 				else
 				{
 					if (direction == DIR_LEFT)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0, true);
 					if (direction == DIR_RIGHT)
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0, true);
 				}
 				lastShotTime = SDL_GetTicks();
 			}
@@ -70,67 +70,146 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 					{
 						direction = DIR_RIGHT;
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 1, 0, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 1, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 0, true);
 
 					}
 					else if (shootLeft == 1)
 					{
 						direction = DIR_LEFT;
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 1, 0, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 1, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 0, true);
 					}
 					else if (shootUp == 1)
 					{
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 1, 0, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 1, 0, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 0, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 0, 1, 0, true);
 					}
 					else if (shootDown == 1)
 					{
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 1, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 1, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 0, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 0, 0, 1, true);
 					}
 				}
 				else
 				{
 					if (direction == DIR_LEFT)
 					{
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 1, 0, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 1, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 0, 1, 0, 0, true);
 					}
 					if (direction == DIR_RIGHT)
 					{
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 1, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 1, 0, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 1);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 1, true);
 
-						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 0);
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 400, 1, 0, 0, 0, true);
 					}
 
 				}
-				
+
+				lastShotTime = SDL_GetTicks();
+			}
+		if (newtime - lastShotTime >= 300)
+			if (player->weapon->type == FlameThrower)
+			{
+				if (shootRight || shootLeft || shootUp || shootDown)
+				{
+					if (shootRight == 1)
+					{
+						direction = DIR_RIGHT;
+						if (shootUp == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0, true);
+						else if (shootDown == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1, true);
+						else
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0, true);
+
+					}
+					else if (shootLeft == 1)
+					{
+						direction = DIR_LEFT;
+						if (shootUp == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0, true);
+						else if (shootDown == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1, true);
+						else
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0, true);
+					}
+					else if (shootUp == 1)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0, true);
+					else if (shootDown == 1)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1, true);
+				}
+				else
+				{
+					if (direction == DIR_LEFT)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0, true);
+					if (direction == DIR_RIGHT)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0, true);
+				}
+				lastShotTime = SDL_GetTicks();
+			}
+		if (newtime - lastShotTime >= 1000)
+			if (player->weapon->type == Boomgun)
+			{
+				if (shootRight || shootLeft || shootUp || shootDown)
+				{
+					if (shootRight == 1)
+					{
+						direction = DIR_RIGHT;
+						if (shootUp == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 1, 0, true);
+						else if (shootDown == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 1, true);
+						else
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0, true);
+
+					}
+					else if (shootLeft == 1)
+					{
+						direction = DIR_LEFT;
+						if (shootUp == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 1, 0, true);
+						else if (shootDown == 1)
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 1, true);
+						else
+							bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0, true);
+					}
+					else if (shootUp == 1)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 1, 0, true);
+					else if (shootDown == 1)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 0, 0, 1, true);
+				}
+				else
+				{
+					if (direction == DIR_LEFT)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 0, 1, 0, 0, true);
+					if (direction == DIR_RIGHT)
+						bullet[n++] = BulletInit(playerRect->x + playerRect->w, playerRect->y + 30, 500, 1, 0, 0, 0, true);
+				}
 				lastShotTime = SDL_GetTicks();
 			}
 
-
 	}
-	for (int i = 1; i < 50; i++)
+	for (int i = 0; i < 50; i++)
 		if (bullet[i] != NULL)
 		{
 			if (player->weapon->type == Rifle)
@@ -203,24 +282,73 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 					free(bullet[i]);
 					free(bulletRect[i]);
 				}
+				else if (((bullet[i]->y - player->y) >= 1500) && bullet[i]->down == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((player->y - bullet[i]->y) >= 1500) && bullet[i]->up == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
 			}
+			//need fix
 			if (player->weapon->type == Shotgun)
 			{
 				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
-				if (bullet[i]->right == 1)
+				if (bullet[i]->up == 1)
+				{
+					bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					if (bullet[i]->left == 1)
+					{
+						bullet[i]->y -= 50 * dt / 1000;
+						bullet[i]->x -= 200 * dt / 1000;
+					}
+					if (bullet[i]->right == 1)
+					{
+						bullet[i]->y -= 50 * dt / 1000;
+						bullet[i]->x += 200 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				else if (bullet[i]->down == 1)
+				{
+					bullet[i]->y += bullet[i]->speed * dt / 1000;
+					if (bullet[i]->left == 1)
+					{
+						bullet[i]->y -= 50 * dt / 1000;
+						bullet[i]->x -= 200 * dt / 1000;
+					}
+					if (bullet[i]->right == 1)
+					{
+						bullet[i]->y -= 50 * dt / 1000;
+						bullet[i]->x += 200 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				else if (bullet[i]->right == 1)
 				{
 					bullet[i]->x += bullet[i]->speed * dt / 1000;
 					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 					if (bullet[i]->up == 1)
 					{
-						bullet[i]->y -= 200 * dt / 1000;
+						bullet[i]->y -= 100 * dt / 1000;
+						bullet[i]->x += 1000 * dt / 1000;
 					}
 					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 					if (bullet[i]->down == 1)
 					{
-						bullet[i]->y += 200 * dt / 1000;
+						bullet[i]->y += 100 * dt / 1000;
+						bullet[i]->x += 1000 * dt / 1000;
 					}
 					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
@@ -243,20 +371,22 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
 					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
 				}
-				else if (bullet[i]->up == 1)
-				{
-					bullet[i]->y -= bullet[i]->speed * dt / 1000;
-					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-				}
-				else if (bullet[i]->down == 1)
-				{
-					bullet[i]->y += bullet[i]->speed * dt / 1000;
-					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
-					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
-				}
 				///////////////////////////////////////////////////////////////////////////////
-				if ((player->x - bullet[i]->x) >= 150 && (bullet[i]->left == 1))
+				if (((bullet[i]->y - player->y) >= 350) && bullet[i]->down == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((player->y - bullet[i]->y) >= 150) && bullet[i]->up == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if ((player->x - bullet[i]->x) >= 150 && (bullet[i]->left == 1))
 				{
 					bullet[i] = NULL;
 					bulletRect[i] = NULL;
@@ -271,12 +401,217 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 					free(bulletRect[i]);
 				}
 			}
+			if (player->weapon->type == FlameThrower)
+			{
+				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
+				if (bullet[i]->right == 1)
+				{
+					bullet[i]->x += bullet[i]->speed * dt / 1000;
+					if ((int)(bullet[i]->x - player->x) % 2 == 0)
+					{
+						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					}
+					else
+						bullet[i]->y += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->up == 1)
+					{
+						bullet[i]->x += 250 * dt / 1000;
+						bullet[i]->y -= bullet[i]->speed / 2 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->down == 1)
+					{
+						bullet[i]->x += 250 * dt / 1000;
+						bullet[i]->y += bullet[i]->speed / 2 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				if (bullet[i]->left == 1)
+				{
+					bullet[i]->x -= bullet[i]->speed * dt / 1000;
+					if ((int)(player->x - bullet[i]->x) % 2 == 0)
+					{
+						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					}
+					else
+						bullet[i]->y += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->up == 1)
+					{
+						bullet[i]->x -= 250 * dt / 1000;
+						bullet[i]->y -= bullet[i]->speed / 2 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->down == 1)
+					{
+						bullet[i]->x -= 250 * dt / 1000;
+						bullet[i]->y += bullet[i]->speed / 2 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				if (bullet[i]->up == 1)
+				{
+					bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					if ((int)(player->y - bullet[i]->y) % 2 == 0)
+					{
+						bullet[i]->x -= bullet[i]->speed / 2 * dt / 1000;
+					}
+					else
+						bullet[i]->x += bullet[i]->speed / 2 * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				if (bullet[i]->down == 1)
+				{
+					bullet[i]->y += bullet[i]->speed * dt / 1000;
+					if ((int)(bullet[i]->y - player->y) % 2 == 0)
+					{
+						bullet[i]->x -= bullet[i]->speed / 2 * dt / 1000;
+					}
+					else
+						bullet[i]->x += bullet[i]->speed / 2 * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				////////////////////////////////////
+				if ((player->x - bullet[i]->x) >= 1000 && (bullet[i]->left == 1))
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((bullet[i]->x - player->x) >= 1150) && bullet[i]->right == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((bullet[i]->y - player->y) >= 1500) && bullet[i]->down == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((player->y - bullet[i]->y) >= 1500) && bullet[i]->up == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+			}
+			if (player->weapon->type == Boomgun)
+			{
+				bulletRect[i] = InitObject(bullet[i]->x, bullet[i]->y, 10, 10);
+				if (bullet[i]->right == 1)
+				{
+					bullet[i]->x += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->up == 1)
+					{
+						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+						bullet[i]->x += 500 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->down == 1)
+					{
+						bullet[i]->y += bullet[i]->speed * dt / 1000;
+						bullet[i]->x += 500 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				if (bullet[i]->left == 1)
+				{
+					bullet[i]->x -= bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->up == 1)
+					{
+						bullet[i]->y -= bullet[i]->speed * dt / 1000;
+						bullet[i]->x -= 500 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+					if (bullet[i]->down == 1)
+					{
+						bullet[i]->y += bullet[i]->speed * dt / 1000;
+						bullet[i]->x -= 500 * dt / 1000;
+					}
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				if (bullet[i]->up == 1)
+				{
+					bullet[i]->y -= bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				if (bullet[i]->down == 1)
+				{
+					bullet[i]->y += bullet[i]->speed * dt / 1000;
+					bullet_rect = { (int)bulletRect[i]->x,(int)bulletRect[i]->y, (int)bulletRect[i]->w, (int)bulletRect[i]->h };
+					SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				}
+				////////////////////////////////////
+				if ((player->x - bullet[i]->x) >= 1000 && (bullet[i]->left == 1))
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((bullet[i]->x - player->x) >= 1150) && bullet[i]->right == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((bullet[i]->y - player->y) >= 1500) && bullet[i]->down == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+				else if (((player->y - bullet[i]->y) >= 1500) && bullet[i]->up == 1)
+				{
+					bullet[i] = NULL;
+					bulletRect[i] = NULL;
+					free(bullet[i]);
+					free(bulletRect[i]);
+				}
+			}
 			for (int j = 0; j < ZOMBIE_COUNT; j++)
 				if (enemy[j] != NULL)
 				{
 					if (SDL_HasIntersectionF(bulletRect[i], enemyRect[j]))
 					{
 						enemy[j]->hp -= player->weapon->damage;
+							if (player->weapon->type == Boomgun && bullet[i]->firstBullet == true)
+							{
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 1, 0, 0, 0, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 0, 1, 0, 0, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 0, 0, 1, 0, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 0, 0, 0, 1, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 1, 0, 1, 0, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 1, 0, 0, 1, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 0, 1, 1, 0, false);
+								bullet[n++] = BulletInit(enemyRect[j]->x + enemyRect[j]->w, enemyRect[j]->y + 30, 500, 0, 1, 0, 1, false);
+							}
 						bullet[i] = NULL;
 						bulletRect[i] = NULL;
 						free(bullet[i]);
@@ -295,14 +630,23 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 							free(enemyRadius[j]);
 						}
 					}
+					else if (enemy[j]->y >= 2000)
+					{
+						enemy[j] = NULL;
+						enemyRect[j] = NULL;
+						enemyRadius[j] = NULL;
+						free(enemy[j]);
+						free(enemyRect[j]);
+						free(enemyRadius[j]);
+					}
 				}
-		
+
 		}
 
 
 
-	if (n >= 49)
+	if (n >= 48)
 	{
-		n = 1;
+		n = 0;
 	}
 }

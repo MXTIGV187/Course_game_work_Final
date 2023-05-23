@@ -36,7 +36,7 @@ Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump)
 	return enemy;
 }
 
-Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down)
+Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down, bool firstBullet)
 {
 	Bullet* bullet = (Bullet*)malloc(sizeof(Bullet));
 	bullet->x = x;
@@ -46,6 +46,7 @@ Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up
 	bullet->left = left;
 	bullet->down = down;
 	bullet->speed = speed;
+	bullet->firstBullet = firstBullet;
 	return bullet;
 }
 

@@ -24,7 +24,6 @@ int main(int argc, char* argv[])
 	srand(time(NULL));
 	SDL_Rect dst_rect = { 0,0,0,0 };
 	
-	SDL_Rect dst_rect_shotgun = { 0,0,0,0 };
 
 	bool running = 0;
 	bool main_menu = 1;
@@ -44,16 +43,37 @@ int main(int argc, char* argv[])
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
 	//
-	Weapon* weapon = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
-	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 100, 100, 100);
+	
+	SDL_Rect dst_rect_shotgun = { 0,0,0,0 };
 	SDL_Rect shotgun_rect;
 	SDL_Texture* shotgun_tex = loadTextureFromFile("shotgun.png", &shotgun_rect, window, renderer, screen_surface);
 	shotgun_rect.h = 70; shotgun_rect.w = 70;
 	shotgun_rect.x = 150; shotgun_rect.y = 680;
 	SDL_FRect* shotgun_frect = InitObject(150, 680, 70, 70);
 
+	SDL_Rect dst_rect_Flame = { 0,0,0,0 };
+	SDL_Rect flame_rect;
+	SDL_Texture* flame_tex = loadTextureFromFile("Flamegun.png", &flame_rect, window, renderer, screen_surface);
+	flame_rect.h = 70; flame_rect.w = 80;
+	flame_rect.x = 950; flame_rect.y = 620;
+	SDL_FRect* flame_frect = InitObject(950, 620, 70, 80);
+
+	SDL_Rect dst_rect_Boomgun = { 0,0,0,0 };
+	SDL_Rect Boom_rect;
+	SDL_Texture* Boom_tex = loadTextureFromFile("Boomgun.png", &Boom_rect, window, renderer, screen_surface);
+	Boom_rect.h = 70; Boom_rect.w = 70;
+	Boom_rect.x = 450; Boom_rect.y = 680;
+	SDL_FRect* boom_frect = InitObject(450, 680,  70, 70);
+
+
+
+
+	Weapon* boomgun = spawn_weapon(Boomgun, 1, "Rifle", 10, 100, 100);
+	Weapon* rifle = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
+	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 10, 100, 100);
+	Weapon* flame = spawn_weapon(FlameThrower, 1, "Rifle", 10, 100, 100);
 	//
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
@@ -287,6 +307,12 @@ int main(int argc, char* argv[])
 
 		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
 
+		dst_rect_Flame = { flame_rect.x,flame_rect.y , flame_rect.w,flame_rect.h };
+		SDL_RenderCopy(renderer, flame_tex, NULL, &dst_rect_Flame);
+
+		dst_rect_Boomgun = { Boom_rect.x,Boom_rect.y , Boom_rect.w,Boom_rect.h };
+		SDL_RenderCopy(renderer, Boom_tex, NULL, &dst_rect_Boomgun);
+
 		dst_rect_shotgun = { shotgun_rect.x,shotgun_rect.y,shotgun_rect.w,shotgun_rect.h };
 		SDL_RenderCopy(renderer, shotgun_tex,	NULL, &dst_rect_shotgun);
 
@@ -381,6 +407,30 @@ int main(int argc, char* argv[])
 					EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
 			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex);
 
+
+
+			if (SDL_HasIntersectionF(playerRect, flame_frect))
+			{
+				player->weapon = flame;
+				SDL_DestroyTexture(flame_tex);
+
+
+
+
+
+			}
+			
+			if (SDL_HasIntersectionF(playerRect, boom_frect))
+			{
+				player->weapon = boomgun;
+				SDL_DestroyTexture(Boom_tex);
+
+
+
+
+
+			}
+
 			if (SDL_HasIntersectionF(playerRect,shotgun_frect))
 			{
 				player->weapon = shotgun;
@@ -395,7 +445,7 @@ int main(int argc, char* argv[])
 			if (reload == 1)
 			{
 				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
+				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle);
 				reload = 0;
 			}
 			if (debug % 2 == 0)
@@ -435,6 +485,7 @@ int main(int argc, char* argv[])
 		
 
 	}
+
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);
 	SDL_DestroyTexture(enemy_tex_idle);
