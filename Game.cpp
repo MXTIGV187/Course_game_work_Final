@@ -41,9 +41,12 @@ int main(int argc, char* argv[])
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
 	//
-	Weapon* weapon = spawn_weapon(Boomgun, 1, "Rifle", 10, 100, 100);
+	Weapon* boomgun = spawn_weapon(Boomgun, 1, "Rifle", 10, 100, 100);
+	Weapon* rifle = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
+	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 10, 100, 100);
+	Weapon* flame = spawn_weapon(FlameThrower, 1, "Rifle", 10, 100, 100);
 	//
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
