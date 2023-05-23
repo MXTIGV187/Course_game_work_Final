@@ -43,6 +43,8 @@ struct Bullet
 	bool up;
 	bool down;
 	bool firstBullet;
+	bool shotAngleDown;
+	bool shotAngleUp;
 	SDL_Texture* texture;
 };
 
@@ -50,7 +52,7 @@ struct Bullet
 Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon);
 mainPhysics* PhysInit(float speed, float gravity);
 Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump);
-Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down, bool firstBullet);
+Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down, bool firstBullet, bool shotAngleUp, bool shotAngleDown);
 void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_FRect* enemyRect, mainPhysics* mainPhys, SDL_FRect* CollisArray, int& sizeArray, int& dt,
 	float& last_enemy_y, float& new_enemy_y, float& dy_enemy);
 SDL_FRect* checkCollision(SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray);
