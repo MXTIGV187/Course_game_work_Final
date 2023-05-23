@@ -7,9 +7,9 @@
 enum WeaponType {
    None,
    Rifle,
-   Pistol,
    Shotgun,
-   Sniper
+   FlameThrower,
+   Boomgun
 };
 
 struct Weapon {

@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	SDL_Rect back_rect;
 	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
 	//
-	Weapon* weapon = spawn_weapon(Rifle, 1, "Rifle", 100, 100, 100);
+	Weapon* weapon = spawn_weapon(Boomgun, 1, "Rifle", 10, 100, 100);
 	//
 	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
 	mainPhysics* mainPhys = PhysInit(150, 250);
@@ -411,6 +411,7 @@ int main(int argc, char* argv[])
 
 
 	}
+
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);
 	SDL_DestroyTexture(enemy_tex_idle);
