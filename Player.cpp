@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "common_parametrs.h"
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon)
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon, Bonus* bonus)
 {
 	Player* player = (Player*)malloc(sizeof(Player));
 	player->hp = hp;
@@ -15,6 +15,7 @@ Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jum
 	player->is_die = is_die;
 	player->upToPlatform = upToPlatform;
 	player->weapon = weapon;
+	player->bonus = bonus;
 	return player;
 }
 
@@ -25,7 +26,7 @@ mainPhysics* PhysInit(float speed, float gravity)
 	mainPhys->speed = speed;
 	return mainPhys;
 }
-Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump)
+Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump, EnemyType type)
 {
 	Enemy* enemy = (Enemy*)malloc(sizeof(Enemy));
 	enemy->hp = hp;
@@ -33,6 +34,7 @@ Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump)
 	enemy->y = y;
 	enemy->is_die = is_die;
 	enemy->is_jump = is_jump;
+	enemy->type = type;
 	return enemy;
 }
 

@@ -45,17 +45,22 @@ int main(int argc, char* argv[])
 	Weapon* rifle = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
 	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 100, 100, 100);
 	Weapon* flame = spawn_weapon(FlameThrower, 1, "Rifle", 30, 100, 100);
+	Weapon* laser = spawn_weapon(Laser, 1, "Rifle", 2, 100, 100);
 	//
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, shotgun);
+	Bonus* speedShoot = bonusInit(100, 100, SpeedShoot, 0);
+	Bonus* upDamage = bonusInit(200, 200, UpDamage, 0);
+	//
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle, NULL);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
 	for (int i = 0; i < ZOMBIE_COUNT; i++)
-		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0);
-
-	SDL_Rect enemy_rect;
-	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect, window, renderer, screen_surface);
-	enemy_rect.w = enemy_rect.h;
+		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0, Zombie);
+	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0, Shooter);
+	SDL_Rect enemy_rect_zombie;
+	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect_zombie, window, renderer, screen_surface);
+	enemy_rect_zombie.w = enemy_rect_zombie.h;
 
 
 	Uint32 lastShotTime = SDL_GetTicks();
@@ -161,6 +166,8 @@ int main(int argc, char* argv[])
 	bool shootDown = 0;
 	bool shootLeft = 0;
 	bool shootRight = 0;
+	int PowerfulTiming = 1000;
+	int PoorTiming = 300;
 
 	for (int i = 0; i < 50; i++)
 	{
@@ -202,6 +209,11 @@ int main(int argc, char* argv[])
 		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
 		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
 	}
+	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+	{
+		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+	}
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
 
@@ -215,6 +227,13 @@ int main(int argc, char* argv[])
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
 		for (int i = 0; i < ZOMBIE_COUNT; i++)
+		{
+			if (enemyRect[i] != NULL)
+				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
+			if (enemyRadius[i] != NULL)
+				enemyRadius[i] = InitObject(enemy[i]->x - 100, enemy[i]->y - 85, 400, 400);
+		}
+		for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
 		{
 			if (enemyRect[i] != NULL)
 				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
@@ -269,8 +288,11 @@ int main(int argc, char* argv[])
 		animate_run = isleft || isright || isup || isdown;
 		for (int i = 0; i < ZOMBIE_COUNT; i++)
 			if (enemy[i] != NULL)
-				dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect.w,enemy_rect.h };
+				dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect_zombie.w,enemy_rect_zombie.h };
 
+		for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+			if (enemy[i] != NULL)                                                                                    // Ñþäà êàðòèíêó ñòðåëêà
+				dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect_zombie.w,enemy_rect_zombie.h };
 		dst_rect = { (int)player->x,(int)player->y,player_rect.w,player_rect.h };
 		Tickrate(lasttime, newtime, dt);
 
@@ -352,16 +374,30 @@ int main(int argc, char* argv[])
 					if (running) {
 
 						cur_frametime += dt;
-						SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect, &dst_enem_rect[i]);
+						SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect_zombie, &dst_enem_rect[i]);
 						if (cur_frametime >= max_frametime)
 						{
 							cur_frametime -= max_frametime;
 							frame = (frame + 1) % frame_count;
-							enemy_rect.x = enemy_rect.w * frame;
+							enemy_rect_zombie.x = enemy_rect_zombie.w * frame;
 						}
 					}
 				}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)       // ÑÞÄÀ ÒÎÆÅ ÊÀÐÒÈÍÊÓ ÑÒÐÅËÀÒ
+				if (enemy[i] != NULL)
+				{
+					if (running) {
 
+						cur_frametime += dt;
+						SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect_zombie, &dst_enem_rect[i]);
+						if (cur_frametime >= max_frametime)
+						{
+							cur_frametime -= max_frametime;
+							frame = (frame + 1) % frame_count;
+							enemy_rect_zombie.x = enemy_rect_zombie.w * frame;
+						}
+					}
+				}
 
 #pragma endregion
 
@@ -370,11 +406,11 @@ int main(int argc, char* argv[])
 			for (int i = 0; i < ZOMBIE_COUNT; i++)
 				if (enemy[i] != NULL)
 					EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
-			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex);
+			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex, PowerfulTiming, PoorTiming);
 			if (reload == 1)
 			{
 				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, boomgun);
+				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle, speedShoot);
 				reload = 0;
 			}
 			if (debug % 2 == 0)
@@ -387,14 +423,14 @@ int main(int argc, char* argv[])
 				}
 				//SDL_RenderFillRectF(renderer, playerRect);
 				SDL_SetRenderDrawColor(renderer, 200, 150, 200, 255);
-				for (int i = 0; i < ZOMBIE_COUNT; i++)
+				for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT -1 ; i++)
 					if (enemyRadius[i] != NULL)
 					{
 						SDL_RenderFillRectF(renderer, enemyRadius[i]);
 						SDL_RenderDrawRectF(renderer, enemyRadius[i]);
 					}
 				SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
-				for (int i = 0; i < ZOMBIE_COUNT; i++)
+				for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT -1 ; i++)
 					if (enemyRect[i] != NULL)
 					{
 						SDL_RenderFillRectF(renderer, enemyRect[i]);
@@ -430,3 +466,6 @@ int main(int argc, char* argv[])
 ÏÒ: Áîññ, òî÷êè óÿçâèìðñòè.
 Ïîäáèðàåìûå áîíóñû îðóæèÿ
 */
+
+
+//player->bonus->lifeTime = SDL_GetTicks();
