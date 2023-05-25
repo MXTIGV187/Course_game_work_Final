@@ -3,7 +3,7 @@
 #include "functions.h"
 #include "common_parametrs.h"
 #include <SDL_image.h>
-
+#include <SDL_ttf.h>
 
 void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface)
 {
@@ -39,6 +39,13 @@ void Init(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 	}
 	if (res & IMG_INIT_JPG) printf_s("Init JPG library.\n"); else printf_s("Can't Init JPG library!\n");
 	if (res & IMG_INIT_PNG) printf_s("Init PNG library.\n"); else printf_s("Can't Init PNG library!\n");
+
+	if (TTF_Init())
+	{
+		printf_s("Couldn't init SDL_TTF! Error: %s\n", SDL_GetError());
+		system("pause");
+		Quit(window, renderer, screen_surface);
+	}
 }
 
 void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_surface)
@@ -51,6 +58,7 @@ void Quit(SDL_Window** window, SDL_Renderer** renderer, SDL_Surface** screen_sur
 
 	if (window != NULL)
 		SDL_DestroyWindow(*window);
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }

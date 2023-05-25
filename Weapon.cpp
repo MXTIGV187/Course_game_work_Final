@@ -33,9 +33,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 	if (player->bonus != NULL)
 	{
 		if (player->bonus->type == SpeedShoot)
-		{
-			if (PoorTiming == 300)
-				player->bonus->lifeTime = SDL_GetTicks(); // убрать
+		{ 
 			PoorTiming = 150;
 			PowerfulTiming = 500;
 			if (newtime - player->bonus->lifeTime >= 15000)
