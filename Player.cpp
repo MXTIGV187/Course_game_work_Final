@@ -3,11 +3,12 @@
 #include "Player.h"
 #include "common_parametrs.h"
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon, Bonus* bonus)
+Player* PlayerInit(int hp, int score, int life, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon, Bonus* bonus)
 {
 	Player* player = (Player*)malloc(sizeof(Player));
 	player->hp = hp;
 	player->score = score;
+	player->life = life;
 	player->killEnemy = killEnemy;
 	player->x = x;
 	player->y = y;
@@ -178,8 +179,9 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 }
 
 void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_FRect* enemyRect, mainPhysics* mainPhys, SDL_FRect* CollisArray, int& sizeArray, int& dt,
-	float& last_enemy_y, float& new_enemy_y, float& dy_enemy)
+	float& last_enemy_y, float& new_enemy_y, float& dy_enemy, Player* player, int& newtime)
 {
+	Uint32 lastShotTimeEnemy = 0;
 	SDL_FRect* CollisRect = checkCollision(enemyRect, CollisArray, sizeArray);
 	if (SDL_HasIntersectionF(enemyRect, CollisRect))
 	{
@@ -235,13 +237,46 @@ void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_
 	if (!enemy->is_jump_right && !enemy->is_jump_left)
 		if (SDL_HasIntersectionF(enemyRadius, playerRect))
 		{
-			if (playerRect->x + playerRect->w <= enemyRect->x)
-				enemy->x -= (mainPhys->speed - 50) * dt / 1000;
-			if (playerRect->x + playerRect->w >= enemyRect->x + enemyRect->w)
-				enemy->x += (mainPhys->speed - 50) * dt / 1000;
+			if (enemy->type == Zombie)
+			{
+				if (playerRect->x + playerRect->w <= enemyRect->x)
+					enemy->x -= (mainPhys->speed - 50) * dt / 1000;
+				if (playerRect->x + playerRect->w >= enemyRect->x + enemyRect->w)
+					enemy->x += (mainPhys->speed - 50) * dt / 1000;
+				if (SDL_HasIntersectionF(enemyRect, playerRect))
+				{
+					lastShotTimeEnemy = SDL_GetTicks();
+					if (newtime - lastShotTimeEnemy >= 3000)
+						player->hp -= 10;
+				}
+			}
 		}
 }
 
+void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, bool& running)
+{
+	if (player->hp <= 0)
+	{
+		player->is_die = 1;
+		player->score -= 30;
+	}
+
+	if (player->is_die == 1)
+	{
+		player->is_die = 0;
+		player->hp = 100;
+		player->x = respawn_x;
+		player->y = respawn_y;
+		player->weapon = rifle;
+		player->bonus = NULL;
+		player->life--;
+	}
+
+	if (player->life <= 0)
+	{
+		running = 0;
+	}
+}
 void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright) {
 
 	if (isleft) {
