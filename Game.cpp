@@ -70,10 +70,10 @@ int main(int argc, char* argv[])
 
 	Weapon* boomgun = spawn_weapon(Boomgun, 1, "Rifle", 10, 100, 100);
 	Weapon* rifle = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
-	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 10, 100, 100);
-	Weapon* flame = spawn_weapon(FlameThrower, 1, "Rifle", 10, 100, 100);
+	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 100, 100, 100);
+	Weapon* flame = spawn_weapon(FlameThrower, 1, "Rifle", 30, 100, 100);
 	//
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle);
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, shotgun);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
@@ -445,7 +445,7 @@ int main(int argc, char* argv[])
 			if (reload == 1)
 			{
 				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle);
+				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, weapon);
 				reload = 0;
 			}
 			if (debug % 2 == 0)
