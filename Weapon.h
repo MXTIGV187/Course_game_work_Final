@@ -9,7 +9,15 @@ enum WeaponType {
    Rifle,
    Shotgun,
    FlameThrower,
-   Boomgun
+   Boomgun,
+   Laser
+};
+
+enum BonusType
+{
+    NoneB,
+    SpeedShoot,
+    UpDamage
 };
 
 struct Weapon {
@@ -21,15 +29,19 @@ struct Weapon {
     float y;
 };
 
-struct Inventory {
-    Weapon items[3];
+struct Bonus {
+    float x;
+    float y;
+    BonusType type;
+    Uint32 lifeTime;
 };
 struct Bullet;
 struct Enemy;
 struct Player;
 Weapon* spawn_weapon(WeaponType type, int id, const char* name, int damage, float x, float y);
+Bonus* bonusInit(float x, float y, BonusType type, Uint32 lifeTime);
 void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, bool& shootLeft, bool& shootUp, bool& shootDown, int& direction, int& n, Bullet** bullet, SDL_FRect* playerRect,
-    int& dt, SDL_FRect** bulletRect, Enemy** enemy, SDL_FRect** enemyRect, SDL_FRect** enemyRadius, Player* player, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex);
+    int& dt, SDL_FRect** bulletRect, Enemy** enemy, SDL_FRect** enemyRect, SDL_FRect** enemyRadius, Player* player, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int& PowerfulTiming, int& PoorTiming);
 
 
 

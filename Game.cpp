@@ -10,6 +10,7 @@
 #include "Animation.h"
 #include "Level.h"
 #include <SDL_mouse.h>
+#include <SDL_ttf.h>
 
 
 
@@ -33,6 +34,12 @@ int main(int argc, char* argv[])
 	int direction = 0;
 
 
+	TTF_Font* font = TTF_OpenFont("retro-land-mayhem.ttf", 25);
+
+	char score[100] = "score: ";
+	SDL_Surface* score_surf = TTF_RenderText_Blended(font, score, { 180,0,0,255 });
+	SDL_Texture* score_tex = SDL_CreateTextureFromSurface(renderer, score_surf);
+
 	SDL_Rect player_rect;
 	SDL_Texture* player_tex_run = loadTextureFromFile("Run.png", &player_rect, window, renderer, screen_surface);
 	player_rect.w = player_rect.h;
@@ -41,7 +48,7 @@ int main(int argc, char* argv[])
 	player_rect.w = player_rect.h;
 
 	SDL_Rect back_rect;
-	SDL_Texture* back_tex = loadTextureFromFile("map.jpg", &back_rect, window, renderer, screen_surface);
+	SDL_Texture* back_tex = loadTextureFromFile("back_ground1.png", &back_rect, window, renderer, screen_surface);
 	//
 	
 	SDL_Rect dst_rect_shotgun = { 0,0,0,0 };
@@ -65,6 +72,29 @@ int main(int argc, char* argv[])
 	Boom_rect.x = 450; Boom_rect.y = 680;
 	SDL_FRect* boom_frect = InitObject(450, 680,  70, 70);
 
+	SDL_Rect dst_rect_lasergun = { 0,0,0,0 };
+	SDL_Rect laser_rect;
+	SDL_Texture* laser_tex = loadTextureFromFile("lasergun.png", &laser_rect, window, renderer, screen_surface);
+	laser_rect.h = 65; laser_rect.w = 85;
+	laser_rect.x = 550; laser_rect.y = 680;
+	SDL_FRect* laser_frect = InitObject(550, 680, 70, 70);
+
+	SDL_Rect dst_rect_bonus_speed = { 0,0,0,0 };
+	SDL_Rect speed_rect;
+	SDL_Texture* speedshoot_tex = loadTextureFromFile("bonus_speed.png", &speed_rect, window, renderer, screen_surface);
+	speed_rect.h = 65; speed_rect.w = 85;
+	speed_rect.x = 1550; speed_rect.y = 680;
+	SDL_FRect* speed_frect = InitObject(1550, 680, 70, 70);
+
+	SDL_Rect dst_rect_bonus_damage = { 0,0,0,0 };
+	SDL_Rect damage_rect;
+	SDL_Texture* damageshoot_tex = loadTextureFromFile("bonus_damage.png", &damage_rect, window, renderer, screen_surface);
+	damage_rect.h = 65; damage_rect.w = 85;
+	damage_rect.x = 1250; damage_rect.y = 680;
+	SDL_FRect* damage_frect = InitObject(1250, 680, 70, 70);
+
+
+
 
 
 
@@ -72,17 +102,26 @@ int main(int argc, char* argv[])
 	Weapon* rifle = spawn_weapon(Rifle, 1, "Rifle", 50, 100, 100);
 	Weapon* shotgun = spawn_weapon(Shotgun, 1, "Rifle", 100, 100, 100);
 	Weapon* flame = spawn_weapon(FlameThrower, 1, "Rifle", 30, 100, 100);
+	Weapon* laser = spawn_weapon(Laser, 1, "Rifle", 2, 100, 100);
 	//
-	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, shotgun);
+	Bonus* speedShoot = bonusInit(100, 100, SpeedShoot, 0);
+	Bonus* upDamage = bonusInit(200, 200, UpDamage, 0);
+	//
+	Player* player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle, NULL);
 	mainPhysics* mainPhys = PhysInit(150, 250);
 
 	Enemy* enemy[100];
 	for (int i = 0; i < ZOMBIE_COUNT; i++)
-		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0);
+		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0, Zombie);
+	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+		enemy[i] = EnemyInit(100, rand() % 2000, 350, 0, 0, Shooter);
+	SDL_Rect enemy_rect_zombie;
+	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect_zombie, window, renderer, screen_surface);
+	enemy_rect_zombie.w = enemy_rect_zombie.h;
 
-	SDL_Rect enemy_rect;
-	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect, window, renderer, screen_surface);
-	enemy_rect.w = enemy_rect.h;
+	SDL_Rect enemy_rect_shooter;
+	SDL_Texture* enemy_shooter_tex_idle = loadTextureFromFile("Gunner_Blue_Idle.png", &enemy_rect_shooter, window, renderer, screen_surface);
+	enemy_rect_shooter.w = enemy_rect_shooter.h;
 
 
 	Uint32 lastShotTime = SDL_GetTicks();
@@ -188,6 +227,8 @@ int main(int argc, char* argv[])
 	bool shootDown = 0;
 	bool shootLeft = 0;
 	bool shootRight = 0;
+	int PowerfulTiming = 1000;
+	int PoorTiming = 300;
 
 	for (int i = 0; i < 50; i++)
 	{
@@ -210,6 +251,7 @@ int main(int argc, char* argv[])
 	int frame = 0;
 	int frame_count = 6;
 	int frame_count_shoot = 4;
+	int frame_count_shooter = 5;
 	int cur_frametime = 0;
 	int max_frametime = 1000 / 10;
 
@@ -229,6 +271,11 @@ int main(int argc, char* argv[])
 		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
 		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
 	}
+	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+	{
+		enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+		enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+	}
 	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 	SDL_RenderClear(renderer);
 
@@ -242,6 +289,13 @@ int main(int argc, char* argv[])
 	{
 		playerRect = InitObject(player->x + 50, player->y + 60, 20, 65);
 		for (int i = 0; i < ZOMBIE_COUNT; i++)
+		{
+			if (enemyRect[i] != NULL)
+				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
+			if (enemyRadius[i] != NULL)
+				enemyRadius[i] = InitObject(enemy[i]->x - 100, enemy[i]->y - 85, 400, 400);
+		}
+		for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
 		{
 			if (enemyRect[i] != NULL)
 				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
@@ -296,8 +350,11 @@ int main(int argc, char* argv[])
 		animate_run = isleft || isright || isup || isdown;
 		for (int i = 0; i < ZOMBIE_COUNT; i++)
 			if (enemy[i] != NULL)
-				dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect.w,enemy_rect.h };
+				dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect_zombie.w,enemy_rect_zombie.h };
 
+		for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+			if (enemy[i] != NULL)                                                                                    // Ñþäà êàðòèíêó ñòðåëêà
+				dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect_zombie.w,enemy_rect_zombie.h };
 		dst_rect = { (int)player->x,(int)player->y,player_rect.w,player_rect.h };
 		Tickrate(lasttime, newtime, dt);
 
@@ -315,6 +372,15 @@ int main(int argc, char* argv[])
 
 		dst_rect_shotgun = { shotgun_rect.x,shotgun_rect.y,shotgun_rect.w,shotgun_rect.h };
 		SDL_RenderCopy(renderer, shotgun_tex,	NULL, &dst_rect_shotgun);
+
+		dst_rect_lasergun = { laser_rect.x,laser_rect.y,laser_rect.w,laser_rect.h };
+		SDL_RenderCopy(renderer, laser_tex, NULL, &dst_rect_lasergun);
+
+		dst_rect_bonus_speed = { speed_rect.x,speed_rect.y,speed_rect.w,speed_rect.h };
+		SDL_RenderCopy(renderer, speedshoot_tex, NULL, &dst_rect_bonus_speed);
+
+		dst_rect_bonus_damage = { damage_rect.x,damage_rect.y,damage_rect.w,damage_rect.h };
+		SDL_RenderCopy(renderer, damageshoot_tex, NULL, &dst_rect_bonus_damage);
 
 		if (animate_run) {
 
@@ -387,17 +453,32 @@ int main(int argc, char* argv[])
 					if (running) {
 
 						cur_frametime += dt;
-						SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect, &dst_enem_rect[i]);
+						SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect_zombie, &dst_enem_rect[i]);
 						if (cur_frametime >= max_frametime)
 						{
 							cur_frametime -= max_frametime;
 							frame = (frame + 1) % frame_count;
-							enemy_rect.x = enemy_rect.w * frame;
+							enemy_rect_zombie.x = enemy_rect_zombie.w * frame;
 						}
 					}
 				}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)       // ÑÞÄÀ ÒÎÆÅ ÊÀÐÒÈÍÊÓ ÑÒÐÅËÀÒ
+				if (enemy[i] != NULL)
+				{
+					if (running) {
 
-
+						cur_frametime += dt;
+						SDL_RenderCopy(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i]);
+						if (cur_frametime >= max_frametime)
+						{
+							cur_frametime -= max_frametime;
+							frame = (frame + 1) % frame_count_shooter;
+							enemy_rect_shooter.x = enemy_rect_shooter.w * frame;
+						}
+					}
+				}
+			SDL_Rect score_rect = { 5,-20,100,100 };
+			SDL_RenderCopy(renderer, score_tex, NULL, &score_rect);
 #pragma endregion
 
 
@@ -405,14 +486,51 @@ int main(int argc, char* argv[])
 			for (int i = 0; i < ZOMBIE_COUNT; i++)
 				if (enemy[i] != NULL)
 					EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
-			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex);
+			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex, PowerfulTiming, PoorTiming);
 
 
+
+
+			if (SDL_HasIntersectionF(playerRect, damage_frect))
+			{
+				player->bonus = upDamage;
+				player->bonus->lifeTime = SDL_GetTicks();
+				SDL_DestroyTexture(damageshoot_tex);
+				free(damage_frect);
+
+
+
+
+			}
+
+			if (SDL_HasIntersectionF(playerRect, speed_frect))
+			{
+				player->bonus = speedShoot;
+				player->bonus->lifeTime = SDL_GetTicks();
+				SDL_DestroyTexture(speedshoot_tex);
+				free(speed_frect);
+
+
+
+
+			}
+
+			if (SDL_HasIntersectionF(playerRect, laser_frect))
+			{
+				player->weapon = laser;
+				SDL_DestroyTexture(laser_tex);
+				free(laser_frect);
+
+
+
+
+			}
 
 			if (SDL_HasIntersectionF(playerRect, flame_frect))
 			{
 				player->weapon = flame;
 				SDL_DestroyTexture(flame_tex);
+				free(flame_frect);
 
 
 
@@ -424,6 +542,7 @@ int main(int argc, char* argv[])
 			{
 				player->weapon = boomgun;
 				SDL_DestroyTexture(Boom_tex);
+				free(boom_frect);
 
 
 
@@ -435,6 +554,7 @@ int main(int argc, char* argv[])
 			{
 				player->weapon = shotgun;
 				SDL_DestroyTexture(shotgun_tex);
+				free(shotgun_frect);
 				
 
 
@@ -445,7 +565,7 @@ int main(int argc, char* argv[])
 			if (reload == 1)
 			{
 				free(player);
-				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, shotgun);
+				player = PlayerInit(100, 100, 300, 300, 0, 1, 0, 0, rifle, speedShoot);
 				reload = 0;
 			}
 			if (debug % 2 == 0)
@@ -458,14 +578,14 @@ int main(int argc, char* argv[])
 				}
 				//SDL_RenderFillRectF(renderer, playerRect);
 				SDL_SetRenderDrawColor(renderer, 200, 150, 200, 255);
-				for (int i = 0; i < ZOMBIE_COUNT; i++)
+				for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT -1 ; i++)
 					if (enemyRadius[i] != NULL)
 					{
 						SDL_RenderFillRectF(renderer, enemyRadius[i]);
 						SDL_RenderDrawRectF(renderer, enemyRadius[i]);
 					}
 				SDL_SetRenderDrawColor(renderer, 200, 0, 200, 255);
-				for (int i = 0; i < ZOMBIE_COUNT; i++)
+				for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT -1 ; i++)
 					if (enemyRect[i] != NULL)
 					{
 						SDL_RenderFillRectF(renderer, enemyRect[i]);
@@ -485,7 +605,7 @@ int main(int argc, char* argv[])
 		
 
 	}
-
+	TTF_CloseFont(font);
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);
 	SDL_DestroyTexture(enemy_tex_idle);
@@ -501,3 +621,6 @@ int main(int argc, char* argv[])
 ÏÒ: Áîññ, òî÷êè óÿçâèìðñòè.
 Ïîäáèðàåìûå áîíóñû îðóæèÿ
 */
+
+
+//player->bonus->lifeTime = SDL_GetTicks();

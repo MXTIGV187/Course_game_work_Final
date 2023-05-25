@@ -3,6 +3,14 @@
 #include <SDL.h>
 #include "Weapon.h"
 struct Weapon;
+struct Bonus;
+
+enum EnemyType
+{
+	Zombie,
+	Shooter
+};
+
 struct Player
 {
 	int hp;
@@ -14,10 +22,12 @@ struct Player
 	bool is_jump;
 	bool upToPlatform;
 	Weapon* weapon;
+	Bonus* bonus;
 };
 
 struct Enemy
 {
+	EnemyType type;
 	int hp;
 	float x;
 	float y;
@@ -49,9 +59,9 @@ struct Bullet
 };
 
 
-Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon);
+Player* PlayerInit(int hp, int score, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon, Bonus* bonus);
 mainPhysics* PhysInit(float speed, float gravity);
-Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump);
+Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump, EnemyType type);
 Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down, bool firstBullet, bool shotAngleUp, bool shotAngleDown);
 void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_FRect* enemyRect, mainPhysics* mainPhys, SDL_FRect* CollisArray, int& sizeArray, int& dt,
 	float& last_enemy_y, float& new_enemy_y, float& dy_enemy);
