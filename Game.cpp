@@ -132,9 +132,6 @@ int main(int argc, char* argv[])
 	SDL_Texture* enemy_shooter_tex_idle = loadTextureFromFile("Gunner_Blue_Idle.png", &enemy_rect_shooter, window, renderer, screen_surface);
 	enemy_rect_shooter.w = enemy_rect_shooter.h;
 
-
-	Uint32 lastShotTime = SDL_GetTicks();
-
 	Bullet* bullet[50];
 	SDL_FRect* bulletRect[50];
 	Bullet* enemyBullet[100];
@@ -498,15 +495,6 @@ int main(int argc, char* argv[])
 			SDL_Rect score_rect = { 5,-20,100,100 };
 			SDL_RenderCopy(renderer, score_tex, NULL, &score_rect);
 #pragma endregion
-
-
-			PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, playerRect, *CollisArray, sizeArray);
-			for (int i = 0; i < ZOMBIE_COUNT; i++)
-				if (enemy[i] != NULL)
-					EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy);
-			Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex, PowerfulTiming, PoorTiming);
-
-
 
 
 			if (SDL_HasIntersectionF(playerRect, damage_frect))
