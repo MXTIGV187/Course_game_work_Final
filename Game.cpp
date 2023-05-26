@@ -477,7 +477,7 @@ int main(int argc, char* argv[])
 						}
 					}
 				}
-			SDL_Rect score_rect = { 5,-20,100,100 };
+			SDL_Rect score_rect = { 5 d   ,-20,100,100 };
 			SDL_RenderCopy(renderer, score_tex, NULL, &score_rect);
 #pragma endregion
 
