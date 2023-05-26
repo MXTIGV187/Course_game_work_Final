@@ -830,3 +830,140 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 		n = 0;
 	}
 }
+
+void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemyBullet, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex)
+{
+	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
+	{
+		if (enemy[i] != NULL && player != NULL)
+			if (enemy[i]->type == Shooter && SDL_HasIntersectionF(enemyRadius[i], playerRect))
+			{
+				if (newtime - lastShotTimeEnemy[i] >= 400)
+				{
+
+					if (playerRect->x >= enemyRect[i]->x)
+					{
+						//direction
+
+						enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1, 0, 0, 0, true, 0, 0);
+
+					}
+					else if (playerRect->x <= enemyRect[i]->x)
+					{
+						//direction
+
+						enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 0, 1, 0, 0, true, 0, 0);
+					}
+					/*	else if (shootUp == 1)
+							enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 500, 0, 0, 1, 0, true, 0, 0);
+						else if (shootDown == 1)
+							enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 500, 0, 0, 0, 1, true, 0, 0);*/
+
+					lastShotTimeEnemy[i] = SDL_GetTicks();
+				}
+			}
+	}
+	for (int i = 0; i < 100; i++)
+		if (enemyBullet[i] != NULL && player != NULL)
+		{
+			enemyBulletRect[i] = InitObject(enemyBullet[i]->x, enemyBullet[i]->y, 10, 10);
+			if (enemyBullet[i]->right == 1)
+			{
+				enemyBullet[i]->x += enemyBullet[i]->speed * dt / 1000;
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				if (enemyBullet[i]->up == 1)
+				{
+					enemyBullet[i]->y -= enemyBullet[i]->speed * dt / 1000;
+					enemyBullet[i]->x += 500 * dt / 1000;
+				}
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				if (enemyBullet[i]->down == 1)
+				{
+					enemyBullet[i]->y += enemyBullet[i]->speed * dt / 1000;
+					enemyBullet[i]->x += 500 * dt / 1000;
+				}
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+			}
+			if (enemyBullet[i]->left == 1)
+			{
+				enemyBullet[i]->x -= enemyBullet[i]->speed * dt / 1000;
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				if (enemyBullet[i]->up == 1)
+				{
+					enemyBullet[i]->y -= enemyBullet[i]->speed * dt / 1000;
+					enemyBullet[i]->x -= 500 * dt / 1000;
+				}
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+				if (enemyBullet[i]->down == 1)
+				{
+					enemyBullet[i]->y += enemyBullet[i]->speed * dt / 1000;
+					enemyBullet[i]->x -= 500 * dt / 1000;
+				}
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+			}
+			if (enemyBullet[i]->up == 1)
+			{
+				enemyBullet[i]->y -= enemyBullet[i]->speed * dt / 1000;
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+			}
+			if (enemyBullet[i]->down == 1)
+			{
+				enemyBullet[i]->y += enemyBullet[i]->speed * dt / 1000;
+				bullet_rect = { (int)enemyBulletRect[i]->x,(int)enemyBulletRect[i]->y, (int)enemyBulletRect[i]->w, (int)enemyBulletRect[i]->h };
+				SDL_RenderCopy(renderer, bullet_tex, NULL, &bullet_rect);
+			}
+			////////////////////////////////////
+			if ((player->x - enemyBullet[i]->x) >= 1000 && (enemyBullet[i]->left == 1))
+			{
+				enemyBullet[i] = NULL;
+				enemyBulletRect[i] = NULL;
+				free(enemyBullet[i]);
+				free(enemyBulletRect[i]);
+			}
+			else if (((enemyBullet[i]->x - player->x) >= 1150) && enemyBullet[i]->right == 1)
+			{
+				enemyBullet[i] = NULL;
+				enemyBulletRect[i] = NULL;
+				free(enemyBullet[i]);
+				free(enemyBulletRect[i]);
+			}
+			else if (((enemyBullet[i]->y - player->y) >= 1500) && enemyBullet[i]->down == 1)
+			{
+				enemyBullet[i] = NULL;
+				enemyBulletRect[i] = NULL;
+				free(enemyBullet[i]);
+				free(enemyBulletRect[i]);
+			}
+			else if (((player->y - enemyBullet[i]->y) >= 1500) && enemyBullet[i]->up == 1)
+			{
+				enemyBullet[i] = NULL;
+				enemyBulletRect[i] = NULL;
+				free(enemyBullet[i]);
+				free(enemyBulletRect[i]);
+			}
+
+
+
+			if (SDL_HasIntersectionF(enemyBulletRect[i], playerRect))
+			{
+				player->hp -= 20;
+				enemyBullet[i] = NULL;
+				enemyBulletRect[i] = NULL;
+				free(enemyBullet[i]);
+				free(enemyBulletRect[i]);
+			}
+
+		}
+
+	if (n_enemy >= 99)
+	{
+		n_enemy = 0;
+	}
+}
