@@ -179,7 +179,7 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 }
 
 void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_FRect* enemyRect, mainPhysics* mainPhys, SDL_FRect* CollisArray, int& sizeArray, int& dt,
-	float& last_enemy_y, float& new_enemy_y, float& dy_enemy, Player* player, int& newtime)
+	float& last_enemy_y, float& new_enemy_y, float& dy_enemy, Player* player, int& newtime, int direction_enemy)
 {
 	Uint32 lastShotTimeEnemy = 0;
 	SDL_FRect* CollisRect = checkCollision(enemyRect, CollisArray, sizeArray);
@@ -240,9 +240,15 @@ void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_
 			if (enemy->type == Zombie)
 			{
 				if (playerRect->x + playerRect->w <= enemyRect->x)
+				{
+					direction_enemy = DIR_LEFT;
 					enemy->x -= (mainPhys->speed - 50) * dt / 1000;
+				}
 				if (playerRect->x + playerRect->w >= enemyRect->x + enemyRect->w)
+				{
+					direction_enemy = DIR_RIGHT;
 					enemy->x += (mainPhys->speed - 50) * dt / 1000;
+				}
 				if (SDL_HasIntersectionF(enemyRect, playerRect))
 				{
 					lastShotTimeEnemy = SDL_GetTicks();

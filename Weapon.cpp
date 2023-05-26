@@ -831,7 +831,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 	}
 }
 
-void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemyBullet, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex)
+void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemyBullet, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int* direction_enemy)
 {
 	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
 	{
@@ -840,9 +840,9 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 			{
 				if (newtime - lastShotTimeEnemy[i] >= 400)
 				{
-
 					if (playerRect->x >= enemyRect[i]->x)
 					{
+					direction_enemy[i] = DIR_RIGHT;
 						//direction
 
 						enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1, 0, 0, 0, true, 0, 0);
@@ -850,6 +850,7 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 					}
 					else if (playerRect->x <= enemyRect[i]->x)
 					{
+						direction_enemy[i] = DIR_LEFT;
 						//direction
 
 						enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 0, 1, 0, 0, true, 0, 0);

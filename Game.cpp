@@ -32,6 +32,9 @@ int main(int argc, char* argv[])
 	Init(&window, &renderer, &screen_surface);
 
 	int direction = 0;
+	int direction_enemy[100];
+	for (int i = 0; i < 100; i++)
+		direction_enemy[i] = 0;
 
 
 	TTF_Font* font = TTF_OpenFont("retro-land-mayhem.ttf", 25);
@@ -468,13 +471,16 @@ int main(int argc, char* argv[])
 					if (running) {
 
 						cur_frametime += dt;
-						SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect_zombie, &dst_enem_rect[i]);
 						if (cur_frametime >= max_frametime)
 						{
 							cur_frametime -= max_frametime;
 							frame = (frame + 1) % frame_count;
 							enemy_rect_zombie.x = enemy_rect_zombie.w * frame;
 						}
+						if (direction_enemy[i] == DIR_RIGHT)
+							SDL_RenderCopy(renderer, enemy_tex_idle, &enemy_rect_zombie, &dst_enem_rect[i]);
+						else
+							SDL_RenderCopyEx(renderer, enemy_tex_idle, &enemy_rect_zombie,& dst_enem_rect[i], 0, NULL, SDL_FLIP_HORIZONTAL);
 					}
 				}
 			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)       // ÑÞÄÀ ÒÎÆÅ ÊÀÐÒÈÍÊÓ ÑÒÐÅËÀÒ
@@ -483,13 +489,16 @@ int main(int argc, char* argv[])
 					if (running) {
 
 						cur_frametime += dt;
-						SDL_RenderCopy(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i]);
 						if (cur_frametime >= max_frametime)
 						{
 							cur_frametime -= max_frametime;
 							frame = (frame + 1) % frame_count_shooter;
 							enemy_rect_shooter.x = enemy_rect_shooter.w * frame;
 						}
+						if (direction_enemy[i] == DIR_RIGHT)
+							SDL_RenderCopy(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i]);
+						else
+							SDL_RenderCopyEx(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i], 0, NULL, SDL_FLIP_HORIZONTAL);
 					}
 				}
 			SDL_Rect score_rect = { 5,-20,100,100 };
@@ -515,10 +524,6 @@ int main(int argc, char* argv[])
 				player->bonus->lifeTime = SDL_GetTicks();
 				SDL_DestroyTexture(speedshoot_tex);
 				free(speed_frect);
-
-
-
-
 			}
 
 			if (SDL_HasIntersectionF(playerRect, laser_frect))
@@ -526,10 +531,6 @@ int main(int argc, char* argv[])
 				player->weapon = laser;
 				SDL_DestroyTexture(laser_tex);
 				free(laser_frect);
-
-
-
-
 			}
 
 			if (SDL_HasIntersectionF(playerRect, flame_frect))
@@ -537,11 +538,6 @@ int main(int argc, char* argv[])
 				player->weapon = flame;
 				SDL_DestroyTexture(flame_tex);
 				free(flame_frect);
-
-
-
-
-
 			}
 			
 			if (SDL_HasIntersectionF(playerRect, boom_frect))
@@ -549,11 +545,6 @@ int main(int argc, char* argv[])
 				player->weapon = boomgun;
 				SDL_DestroyTexture(Boom_tex);
 				free(boom_frect);
-
-
-
-
-
 			}
 
 			if (SDL_HasIntersectionF(playerRect,shotgun_frect))
@@ -561,20 +552,15 @@ int main(int argc, char* argv[])
 				player->weapon = shotgun;
 				SDL_DestroyTexture(shotgun_tex);
 				free(shotgun_frect);
-				
-
-
-
-
 			}
 
 			if (player != NULL)
 			{
-				EnemyShoot(lastShotTimeEnemy, newtime, dt, enemyBullet, enemy, player, enemyRadius, enemyRect, enemyBulletRect, playerRect, n_enemy, renderer, bullet_rect, bullet_tex);
+				EnemyShoot(lastShotTimeEnemy, newtime, dt, enemyBullet, enemy, player, enemyRadius, enemyRect, enemyBulletRect, playerRect, n_enemy, renderer, bullet_rect, bullet_tex, direction_enemy);
 				PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, playerRect, *CollisArray, sizeArray);
 				for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT - 1; i++)
 					if (enemy[i] != NULL)
-						EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy, player, newtime);
+						EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy, player, newtime, direction_enemy[i]);
 				Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex, PowerfulTiming, PoorTiming);
 			IsPlayerDie(player, respawn_x, respawn_y, rifle, running);
 			}
