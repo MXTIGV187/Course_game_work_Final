@@ -491,7 +491,7 @@ int main(int argc, char* argv[])
 		//	paralax_bg2_rect.x = 0;
 		//}
 
-		if (playerRect->x >= WINDOW_WIDTH / 2 && isright) {
+		if (player->x >= WINDOW_WIDTH / 2 && isright) {
 			player->x = WINDOW_WIDTH / 2;
 			back_rect.x-=3;
 			for (int j = 0; j < sizeArray; j++) {
@@ -536,7 +536,7 @@ int main(int argc, char* argv[])
 
 
 		}
-		else if (playerRect->x >= WINDOW_WIDTH / 2 && isleft) 
+		else if (player->x >= WINDOW_WIDTH / 2 - 10 && isleft) 
 		{
 			player->x = WINDOW_WIDTH / 2;
 			back_rect.x +=3;
