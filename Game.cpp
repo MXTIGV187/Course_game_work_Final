@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
 
 
 
-
 	TTF_Font* font = TTF_OpenFont("retro-land-mayhem.ttf", 25);
 
 	char score[100] = "score: ";
@@ -76,7 +75,7 @@ int main(int argc, char* argv[])
 	player_rect.w = player_rect.h;
 
 	SDL_Rect back_rect;
-	SDL_Texture* back_tex = loadTextureFromFile("back_ground1.png", &back_rect, window, renderer, screen_surface);
+	SDL_Texture* back_tex = loadTextureFromFile("LEVEL1.png", &back_rect, window, renderer, screen_surface);
 
 	SDL_Rect paralax_bg1_rect;
 	SDL_Texture* paralax_bg1_tex = loadTextureFromFile("jungle_paralax_bg1.png", &paralax_bg1_rect, window, renderer, screen_surface);
@@ -202,6 +201,7 @@ int main(int argc, char* argv[])
 	int mouseY;
 	SDL_Rect RectPlay;
 	SDL_Rect RectExit;
+	//PrintScoreTable("ScoreTable.txt");
 	SDL_Rect Score_menu;
 	SDL_Rect About;
 	SDL_Rect LoadGame;
@@ -492,48 +492,93 @@ int main(int argc, char* argv[])
 		//}
 
 		if (playerRect->x >= WINDOW_WIDTH / 2 && isright) {
-
-			back_rect.x--;
+			player->x = WINDOW_WIDTH / 2;
+			back_rect.x-=3;
 			for (int j = 0; j < sizeArray; j++) {
-				(*CollisArray + j)->x--;
+				(*CollisArray + j)->x-=3;
 			}
 			for (int i = 0; i < ZOMBIE_COUNT; i++) {
 				if(enemy[i] != NULL)
 				{
-					enemy[i]->x--;
+					enemy[i]->x-=3;
 				}
 			}
 			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
 				if (enemy[i] != NULL)
 				{
-					enemy[i]->x--;
+					enemy[i]->x-=3;
 				}
 			}
 
-			damage_rect.x--;
-			speed_rect.x--;
-			damage_frect->x--;
-			speed_frect->x--;
-			speedShoot->x--;
-			upDamage->x--;
+			damage_rect.x-=3;
+			speed_rect.x -=3;
+			damage_frect->x -=3;
+			speed_frect->x -=3;
+			speedShoot->x -=3;
+			upDamage->x -=3;
 
-			boomgun->x--;
-			flame->x--;
-			laser->x--;
-			shotgun->x--;
+			boomgun->x -=3;
+			flame->x -=3;
+			laser->x -=3;
+			shotgun->x -=3;
 
-			Boom_rect.x--;
-			boom_frect->x--;
+			Boom_rect.x -=3;
+			boom_frect->x -=3;
 
-			flame_rect.x--;
-			flame_frect->x--;
+			flame_rect.x -=3;
+			flame_frect->x -=3;
 
-			laser_rect.x--;
-			laser_frect->x--;
+			laser_rect.x -=3;
+			laser_frect->x -=3;
 
-			shotgun_rect.x--;
-			shotgun_frect->x--;
+			shotgun_rect.x -=3;
+			shotgun_frect->x -=3;
 
+
+		}
+		else if (playerRect->x >= WINDOW_WIDTH / 2 && isleft) 
+		{
+			player->x = WINDOW_WIDTH / 2;
+			back_rect.x +=3;
+			for (int j = 0; j < sizeArray; j++) {
+				(*CollisArray + j)->x +=3;
+			}
+			for (int i = 0; i < ZOMBIE_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x +=3;
+				}
+			}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x +=3;
+				}
+			}
+
+			damage_rect.x +=3;
+			speed_rect.x +=3;
+			damage_frect->x +=3;
+			speed_frect->x +=3;
+			speedShoot->x +=3;
+			upDamage->x +=3;
+
+			boomgun->x +=3;
+			flame->x +=3;
+			laser->x +=3;
+			shotgun->x +=3;
+
+			Boom_rect.x +=3;
+			boom_frect->x +=3;
+
+			flame_rect.x +=3;
+			flame_frect->x +=3;
+
+			laser_rect.x +=3;
+			laser_frect->x +=3;
+
+			shotgun_rect.x +=3;
+			shotgun_frect->x +=3;
 
 		}
 		dst_rect_Boomgun = {Boom_rect.x,Boom_rect.y ,Boom_rect.w ,Boom_rect.h };
@@ -562,6 +607,7 @@ int main(int argc, char* argv[])
 			paralax_bg22_rect.x += 2;
 			paralax_bg222_rect.x += 2;
 		}
+
 
 		dst_rect_bg1 = { paralax_bg1_rect.x, paralax_bg1_rect.y, paralax_bg1_rect.w, paralax_bg1_rect.h };
 		SDL_RenderCopy(renderer, paralax_bg1_tex, NULL, &dst_rect_bg1);
@@ -791,7 +837,6 @@ int main(int argc, char* argv[])
 			{
 				player->weapon = laser;
 				SDL_DestroyTexture(laser_tex);
-				
 				free(laser_frect);
 			}
 
@@ -871,6 +916,7 @@ int main(int argc, char* argv[])
 		
 
 	}
+	SaveScoreTable(player, "ScoreTable.txt");
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);
