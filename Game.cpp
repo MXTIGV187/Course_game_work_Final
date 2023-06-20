@@ -22,8 +22,19 @@ frameAnim* Run;
 
 int main(int argc, char* argv[])
 {
+
 	srand(time(NULL));
 	SDL_Rect dst_rect = { 0,0,0,0 };
+
+	SDL_Rect dst_rect_bg = { 0,0,0,0 };
+
+	SDL_Rect dst_rect_bg1 = { 0,0,0,0 };
+	SDL_Rect dst_rect_bg11 = { 0,0,0,0 };
+	SDL_Rect dst_rect_bg111 = { 0,0,0,0 };
+
+	SDL_Rect dst_rect_bg2 = { 0,0,0,0 };
+	SDL_Rect dst_rect_bg22 = { 0,0,0,0 };
+	SDL_Rect dst_rect_bg222 = { 0,0,0,0 };
 	
 
 	bool running = 0;
@@ -37,11 +48,24 @@ int main(int argc, char* argv[])
 		direction_enemy[i] = 0;
 
 
+
 	TTF_Font* font = TTF_OpenFont("retro-land-mayhem.ttf", 25);
 
 	char score[100] = "score: ";
 	SDL_Surface* score_surf = TTF_RenderText_Blended(font, score, { 180,0,0,255 });
 	SDL_Texture* score_tex = SDL_CreateTextureFromSurface(renderer, score_surf);
+
+	char  new_game[100] = "New game ";
+	SDL_Surface* newgame_surf = TTF_RenderText_Blended(font, new_game, { 180,0,0,255 });
+	SDL_Texture* newgame_tex = SDL_CreateTextureFromSurface(renderer, newgame_surf);
+
+	char load_game[100] = "Load game ";
+	SDL_Surface* load_surf = TTF_RenderText_Blended(font, load_game, { 180,0,0,255 });
+	SDL_Texture* load_tex = SDL_CreateTextureFromSurface(renderer, load_surf);
+
+	char exit_game[100] = "Exit game ";
+	SDL_Surface* exit_surf = TTF_RenderText_Blended(font, exit_game, { 180,0,0,255 });
+	SDL_Texture* exit_tex = SDL_CreateTextureFromSurface(renderer, exit_surf);
 
 	SDL_Rect player_rect;
 	SDL_Texture* player_tex_run = loadTextureFromFile("Run.png", &player_rect, window, renderer, screen_surface);
@@ -51,7 +75,31 @@ int main(int argc, char* argv[])
 	player_rect.w = player_rect.h;
 
 	SDL_Rect back_rect;
-	SDL_Texture* back_tex = loadTextureFromFile("back_ground1.png", &back_rect, window, renderer, screen_surface);
+	SDL_Texture* back_tex = loadTextureFromFile("LEVEL1.png", &back_rect, window, renderer, screen_surface);
+
+	SDL_Rect paralax_bg1_rect;
+	SDL_Texture* paralax_bg1_tex = loadTextureFromFile("jungle_paralax_bg1.png", &paralax_bg1_rect, window, renderer, screen_surface);
+	paralax_bg1_rect.x = 0; paralax_bg1_rect.y = 0; paralax_bg1_rect.w = 1920; paralax_bg1_rect.h = 1080;
+
+	SDL_Rect paralax_bg11_rect;
+	SDL_Texture* paralax_bg11_tex = loadTextureFromFile("jungle_paralax_bg1.png", &paralax_bg11_rect, window, renderer, screen_surface);
+	paralax_bg11_rect.x = -1920; paralax_bg11_rect.y = 0; paralax_bg11_rect.w = 1920; paralax_bg11_rect.h = 1080;
+
+	SDL_Rect paralax_bg111_rect;
+	SDL_Texture* paralax_bg111_tex = loadTextureFromFile("jungle_paralax_bg1.png", &paralax_bg111_rect, window, renderer, screen_surface);
+	paralax_bg111_rect.x = 1920; paralax_bg111_rect.y = 0; paralax_bg111_rect.w = 1920; paralax_bg111_rect.h = 1080;
+
+	SDL_Rect paralax_bg2_rect;
+	SDL_Texture* paralax_bg2_tex = loadTextureFromFile("jungle_paralax_bg2.png", &paralax_bg2_rect, window, renderer, screen_surface);
+	paralax_bg2_rect.x = 0; paralax_bg2_rect.y = 0; paralax_bg2_rect.w = 1920; paralax_bg2_rect.h = 1080;
+
+	SDL_Rect paralax_bg22_rect;
+	SDL_Texture* paralax_bg22_tex = loadTextureFromFile("jungle_paralax_bg2.png", &paralax_bg22_rect, window, renderer, screen_surface);
+	paralax_bg22_rect.x = -1920; paralax_bg22_rect.y = 0; paralax_bg22_rect.w = 1920; paralax_bg22_rect.h = 1080;
+
+	SDL_Rect paralax_bg222_rect;
+	SDL_Texture* paralax_bg222_tex = loadTextureFromFile("jungle_paralax_bg2.png", &paralax_bg222_rect, window, renderer, screen_surface);
+	paralax_bg222_rect.x = 1920; paralax_bg222_rect.y = 0; paralax_bg222_rect.w = 1920; paralax_bg222_rect.h = 1080;
 	//
 	
 	SDL_Rect dst_rect_shotgun = { 0,0,0,0 };
@@ -154,20 +202,58 @@ int main(int argc, char* argv[])
 	SDL_Rect RectPlay;
 	SDL_Rect RectExit;
 	//PrintScoreTable("ScoreTable.txt");
+	SDL_Rect Score_menu;
+	SDL_Rect About;
+	SDL_Rect LoadGame;
+
 	while (main_menu)
 	{
 		SDL_RenderCopy(renderer, logo_tex, &logo_rect, NULL);
-		RectPlay.x = 860; RectPlay.y = 700; RectPlay.h = 100; RectPlay.w = 400;
+		RectPlay.x = 30; RectPlay.y = 800; RectPlay.h = 100; RectPlay.w = 400;
 
 		SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
 		SDL_RenderFillRect(renderer, &RectPlay);
 		SDL_RenderDrawRect(renderer, &RectPlay);
 
-		RectExit.x = 860; RectExit.y = 900; RectExit.h = 100; RectExit.w = 400;
+		SDL_Rect newgame_rect = { 45 ,800,80,100 };
+
+		sprintf_s(new_game, "New game");
+
+		if ((newgame_tex) != NULL)
+			SDL_DestroyTexture(newgame_tex);
+		newgame_tex = Load_Texture_Font(new_game, font, &newgame_rect, { 255,0,0,255 }, renderer);
+		newgame_rect = { 45 ,800,150,100 };
+
+		SDL_RenderCopy(renderer, newgame_tex, NULL, &newgame_rect);
+
+		RectExit.x = 1320 ; RectExit.y = 800; RectExit.h = 100; RectExit.w = 400;
 		SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
 		SDL_RenderFillRect(renderer, &RectExit);
 		SDL_RenderDrawRect(renderer, &RectExit);
 
+		SDL_Rect exitgame_rect = { 45 ,800,80,100 };
+
+		sprintf_s(exit_game, "Exit game");
+
+		if ((exit_tex) != NULL)
+			SDL_DestroyTexture(exit_tex);
+		exit_tex = Load_Texture_Font(exit_game, font, &exitgame_rect, { 255,0,0,255 }, renderer);
+		exitgame_rect = { 1335 ,800,150,100 };
+
+		SDL_RenderCopy(renderer, exit_tex, NULL, &exitgame_rect);
+
+		LoadGame.x = 460; LoadGame.y = 800; LoadGame.h = 100; LoadGame.w = 400;
+		SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+		SDL_RenderFillRect(renderer, &LoadGame);
+		SDL_RenderDrawRect(renderer, &LoadGame);
+
+		Score_menu.x = 890; Score_menu.y = 800; Score_menu.h = 100; Score_menu.w = 400;
+		SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+		SDL_RenderFillRect(renderer, &Score_menu);
+		SDL_RenderDrawRect(renderer, &Score_menu);
+
+
+		
 
 		SDL_Event event_menu;
 		while (SDL_PollEvent(&event_menu))
@@ -202,6 +288,20 @@ int main(int argc, char* argv[])
 
 			SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
 			SDL_RenderFillRect(renderer, &RectExit);
+		}
+
+		if (SDL_PointInRect(&point, &Score_menu))
+		{
+
+			SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+			SDL_RenderFillRect(renderer, &Score_menu);
+		}
+
+		if (SDL_PointInRect(&point, &LoadGame))
+		{
+
+			SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+			SDL_RenderFillRect(renderer, &LoadGame);
 		}
 
 
@@ -317,7 +417,7 @@ int main(int argc, char* argv[])
 		for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++)
 		{
 			if (enemyRect[i] != NULL)
-				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 65);
+				enemyRect[i] = InitObject(enemy[i]->x + 30, enemy[i]->y + 30, 35, 55);
 			if (enemyRadius[i] != NULL)
 				enemyRadius[i] = InitObject(enemy[i]->x - 100, enemy[i]->y - 85, 400, 400);
 		}
@@ -381,7 +481,210 @@ int main(int argc, char* argv[])
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
 
-		SDL_RenderCopy(renderer, back_tex, &back_rect, NULL);
+
+		//if (paralax_bg1_rect.x <= 0) {
+		//	paralax_bg1_rect.x = 0;
+		//	paralax_bg2_rect.x = WINDOW_WIDTH - paralax_bg2_rect.w;
+		//}
+		//else if (paralax_bg1_rect.x >= WINDOW_WIDTH - paralax_bg1_rect.w) {
+		//	paralax_bg1_rect.x = WINDOW_WIDTH - paralax_bg1_rect.w;
+		//	paralax_bg2_rect.x = 0;
+		//}
+
+		if (playerRect->x >= WINDOW_WIDTH / 2 && isright) {
+			player->x = WINDOW_WIDTH / 2;
+			back_rect.x-=3;
+			for (int j = 0; j < sizeArray; j++) {
+				(*CollisArray + j)->x-=3;
+			}
+			for (int i = 0; i < ZOMBIE_COUNT; i++) {
+				if(enemy[i] != NULL)
+				{
+					enemy[i]->x-=3;
+				}
+			}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x-=3;
+				}
+			}
+
+			damage_rect.x-=3;
+			speed_rect.x -=3;
+			damage_frect->x -=3;
+			speed_frect->x -=3;
+			speedShoot->x -=3;
+			upDamage->x -=3;
+
+			boomgun->x -=3;
+			flame->x -=3;
+			laser->x -=3;
+			shotgun->x -=3;
+
+			Boom_rect.x -=3;
+			boom_frect->x -=3;
+
+			flame_rect.x -=3;
+			flame_frect->x -=3;
+
+			laser_rect.x -=3;
+			laser_frect->x -=3;
+
+			shotgun_rect.x -=3;
+			shotgun_frect->x -=3;
+
+
+		}
+		else if (playerRect->x >= WINDOW_WIDTH / 2 && isleft) 
+		{
+			player->x = WINDOW_WIDTH / 2;
+			back_rect.x +=3;
+			for (int j = 0; j < sizeArray; j++) {
+				(*CollisArray + j)->x +=3;
+			}
+			for (int i = 0; i < ZOMBIE_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x +=3;
+				}
+			}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x +=3;
+				}
+			}
+
+			damage_rect.x +=3;
+			speed_rect.x +=3;
+			damage_frect->x +=3;
+			speed_frect->x +=3;
+			speedShoot->x +=3;
+			upDamage->x +=3;
+
+			boomgun->x +=3;
+			flame->x +=3;
+			laser->x +=3;
+			shotgun->x +=3;
+
+			Boom_rect.x +=3;
+			boom_frect->x +=3;
+
+			flame_rect.x +=3;
+			flame_frect->x +=3;
+
+			laser_rect.x +=3;
+			laser_frect->x +=3;
+
+			shotgun_rect.x +=3;
+			shotgun_frect->x +=3;
+
+		}
+		dst_rect_Boomgun = {Boom_rect.x,Boom_rect.y ,Boom_rect.w ,Boom_rect.h };
+		dst_rect_Flame = {flame_rect.x,flame_rect.y ,flame_rect.w ,flame_rect.h };
+		dst_rect_lasergun = { laser_rect.x, laser_rect.y, laser_rect.w, laser_rect.h};
+		dst_rect_shotgun={shotgun_rect.x,shotgun_rect.y,shotgun_rect.w,shotgun_rect.h};
+		dst_rect_bonus_damage = {damage_rect.x,damage_rect.y,damage_rect.w,damage_rect.h};
+		dst_rect_bonus_speed = {speed_rect.x,speed_rect.y,speed_rect.w,speed_rect.h};
+		dst_rect_bg = { back_rect.x,back_rect.y,back_rect.w,back_rect.h };
+		
+
+		
+		if (isright) {
+			paralax_bg1_rect.x -= 1;
+			paralax_bg11_rect.x -= 1;
+			paralax_bg111_rect.x -= 1;
+			paralax_bg2_rect.x -= 2;
+			paralax_bg22_rect.x -= 2;
+			paralax_bg222_rect.x -= 2;
+		}
+		if (isleft) {
+			paralax_bg1_rect.x += 1;
+			paralax_bg11_rect.x += 1;
+			paralax_bg111_rect.x += 1;
+			paralax_bg2_rect.x += 2;
+			paralax_bg22_rect.x += 2;
+			paralax_bg222_rect.x += 2;
+		}
+
+
+		dst_rect_bg1 = { paralax_bg1_rect.x, paralax_bg1_rect.y, paralax_bg1_rect.w, paralax_bg1_rect.h };
+		SDL_RenderCopy(renderer, paralax_bg1_tex, NULL, &dst_rect_bg1);
+
+		dst_rect_bg11 = { paralax_bg11_rect.x, paralax_bg11_rect.y, paralax_bg11_rect.w, paralax_bg11_rect.h };
+		SDL_RenderCopy(renderer, paralax_bg11_tex, NULL, &dst_rect_bg11);
+
+		dst_rect_bg111 = { paralax_bg111_rect.x, paralax_bg111_rect.y, paralax_bg111_rect.w, paralax_bg111_rect.h };
+		SDL_RenderCopy(renderer, paralax_bg111_tex, NULL, &dst_rect_bg111);
+
+		dst_rect_bg2 = { paralax_bg2_rect.x, paralax_bg2_rect.y, paralax_bg2_rect.w, paralax_bg2_rect.h };
+		SDL_RenderCopy(renderer, paralax_bg2_tex, NULL, &dst_rect_bg2);
+
+		dst_rect_bg22 = { paralax_bg22_rect.x, paralax_bg22_rect.y, paralax_bg22_rect.w, paralax_bg22_rect.h };
+		SDL_RenderCopy(renderer, paralax_bg22_tex, NULL, &dst_rect_bg22);
+
+		dst_rect_bg222 = { paralax_bg222_rect.x, paralax_bg222_rect.y, paralax_bg222_rect.w, paralax_bg222_rect.h };
+		SDL_RenderCopy(renderer, paralax_bg222_tex, NULL, &dst_rect_bg222);
+
+		
+
+		if (paralax_bg1_rect.x >= WINDOW_WIDTH) {
+			paralax_bg1_rect.x = -1920;
+			dst_rect_bg1 = { paralax_bg1_rect.x, paralax_bg1_rect.y, paralax_bg1_rect.w, paralax_bg1_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg1_tex, NULL, &dst_rect_bg1);
+		}
+
+		if (paralax_bg11_rect.x >= WINDOW_WIDTH) {
+			paralax_bg11_rect.x = -1920;
+			dst_rect_bg11 = { paralax_bg11_rect.x, paralax_bg11_rect.y, paralax_bg11_rect.w, paralax_bg11_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg11_tex, NULL, &dst_rect_bg11);
+		}
+		if (paralax_bg111_rect.x >= 3840) {
+			paralax_bg111_rect.x = 1920;
+			dst_rect_bg111 = { paralax_bg111_rect.x, paralax_bg111_rect.y, paralax_bg111_rect.w, paralax_bg111_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg111_tex, NULL, &dst_rect_bg111);
+		}
+
+		if (paralax_bg1_rect.x <= -WINDOW_WIDTH) {
+			paralax_bg1_rect.x = 0;
+			dst_rect_bg1 = { paralax_bg1_rect.x, paralax_bg1_rect.y, paralax_bg1_rect.w, paralax_bg1_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg1_tex, NULL, &dst_rect_bg1);
+		}
+
+		if (paralax_bg11_rect.x <= -3840) {
+			paralax_bg11_rect.x = -1920;
+			dst_rect_bg11 = { paralax_bg11_rect.x, paralax_bg11_rect.y, paralax_bg11_rect.w, paralax_bg11_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg11_tex, NULL, &dst_rect_bg11);
+		}
+		if (paralax_bg111_rect.x >= 0) {
+			paralax_bg111_rect.x = 1920;
+			dst_rect_bg111 = { paralax_bg111_rect.x, paralax_bg111_rect.y, paralax_bg111_rect.w, paralax_bg111_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg111_tex, NULL, &dst_rect_bg111);
+		}
+
+
+
+
+		if (paralax_bg2_rect.x >= WINDOW_WIDTH) {
+			paralax_bg2_rect.x = -1920;
+			dst_rect_bg2 = { paralax_bg2_rect.x, paralax_bg2_rect.y, paralax_bg2_rect.w, paralax_bg2_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg2_tex, NULL, &dst_rect_bg2);
+		}
+
+		if (paralax_bg22_rect.x >= WINDOW_WIDTH) {
+			paralax_bg22_rect.x = -1920;
+			dst_rect_bg22 = { paralax_bg22_rect.x, paralax_bg22_rect.y, paralax_bg22_rect.w, paralax_bg22_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg22_tex, NULL, &dst_rect_bg22);
+		}
+		if (paralax_bg222_rect.x >= 3840) {
+			paralax_bg222_rect.x = 1920;
+			dst_rect_bg222 = { paralax_bg222_rect.x, paralax_bg222_rect.y, paralax_bg222_rect.w, paralax_bg222_rect.h };
+			SDL_RenderCopy(renderer, paralax_bg222_tex, NULL, &dst_rect_bg222);
+		}
+
+		SDL_RenderCopy(renderer, back_tex, NULL, &dst_rect_bg);
+
 
 		dst_rect_Flame = { flame_rect.x,flame_rect.y , flame_rect.w,flame_rect.h };
 		SDL_RenderCopy(renderer, flame_tex, NULL, &dst_rect_Flame);
@@ -502,7 +805,14 @@ int main(int argc, char* argv[])
 							SDL_RenderCopyEx(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i], 0, NULL, SDL_FLIP_HORIZONTAL);
 					}
 				}
-			SDL_Rect score_rect = { 5,-20,100,100 };
+			SDL_Rect score_rect = { 5 ,-20,100,100 };
+
+			sprintf_s(score, "score:%i", player->score);
+
+			if (score_tex != NULL)
+				SDL_DestroyTexture(score_tex);
+			score_tex = Load_Texture_Font(score, font, &score_rect, { 255,0,0,255 },renderer);
+
 			SDL_RenderCopy(renderer, score_tex, NULL, &score_rect);
 #pragma endregion
 
@@ -513,10 +823,6 @@ int main(int argc, char* argv[])
 				player->bonus->lifeTime = SDL_GetTicks();
 				SDL_DestroyTexture(damageshoot_tex);
 				free(damage_frect);
-
-
-
-
 			}
 
 			if (SDL_HasIntersectionF(playerRect, speed_frect))
@@ -554,6 +860,8 @@ int main(int argc, char* argv[])
 				SDL_DestroyTexture(shotgun_tex);
 				free(shotgun_frect);
 			}
+
+
 
 			if (player != NULL)
 			{

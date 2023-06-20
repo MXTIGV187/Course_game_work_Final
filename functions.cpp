@@ -92,5 +92,12 @@ SDL_Texture* loadTextureFromFile(const char* filename, SDL_Rect* rect, SDL_Windo
 	SDL_FreeSurface(surface);
 	return texture;
 	}
-
+SDL_Texture* Load_Texture_Font(const char* text, TTF_Font* font, SDL_Rect* rect, SDL_Color color, SDL_Renderer* renderer)
+{
+    SDL_Surface* surface = TTF_RenderText_Blended(font, text, color);
+    *rect = { 0, 0, surface->w, surface->h };
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    return texture;
+}
 

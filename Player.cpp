@@ -116,6 +116,7 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 
 	if (isup)
 	{
+		player->upToPlatform = 0;
 		if (player->is_jump == 0)
 		{
 			player->y -= mainPhys->gravity * dt / 1000;
@@ -175,6 +176,8 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 			}
 		}
 	}
+	if (player->y > 1000)
+		player->is_die = 1;     
 
 }
 
