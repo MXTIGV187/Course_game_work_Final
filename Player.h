@@ -59,6 +59,12 @@ struct Bullet
 	SDL_Texture* texture;
 };
 
+struct Score
+{
+	int life;
+	int score;
+	int killEnemy;
+};
 
 Player* PlayerInit(int hp, int score, int life, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon, Bonus* bonus);
 mainPhysics* PhysInit(float speed, float gravity);
@@ -71,5 +77,7 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 	bool& isdown, bool& isleft, bool& isright, mainPhysics* mainPhys, SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray);
 void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, bool& running);
 void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright);
+void SaveScoreTable(Player* player, const char* fileName);
+Score* PrintScoreTable(const char* fileName);
 
 #endif

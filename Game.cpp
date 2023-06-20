@@ -153,6 +153,7 @@ int main(int argc, char* argv[])
 	int mouseY;
 	SDL_Rect RectPlay;
 	SDL_Rect RectExit;
+	//PrintScoreTable("ScoreTable.txt");
 	while (main_menu)
 	{
 		SDL_RenderCopy(renderer, logo_tex, &logo_rect, NULL);
@@ -607,6 +608,7 @@ int main(int argc, char* argv[])
 		
 
 	}
+	SaveScoreTable(player, "ScoreTable.txt");
 	TTF_CloseFont(font);
 	SDL_DestroyTexture(player_tex_run);
 	SDL_DestroyTexture(player_tex_idle);

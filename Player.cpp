@@ -298,3 +298,102 @@ void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, boo
 		}
 	}
 }
+
+void SaveScoreTable(Player* player, const char* fileName)
+{
+	Score* mass = (Score*)malloc(10 * sizeof(Score));
+	if (mass == NULL)
+	{
+		printf("Ошибка выделения памяти\n");
+		exit(1);
+	}
+
+	Score temp;
+	temp.life = player->life;
+	temp.score = player->score;
+	temp.killEnemy = player->killEnemy;
+
+	FILE* file;
+	fopen_s(&file, fileName, "r+");
+	if (file == NULL)
+	{
+		printf("Ошибка открытия файла\n");
+		exit(1);
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		fscanf_s(file, "%d %d %d\n", &mass[i].score, &mass[i].killEnemy, &mass[i].life);
+	}
+
+	if (player->score > mass[9].score)
+	{
+		mass[9] = temp;
+	}
+
+	// Сортировка массива mass по убыванию score
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9 - i; j++)
+		{
+			if (mass[j].score < mass[j + 1].score)
+			{
+				Score temp = mass[j];
+				mass[j] = mass[j + 1];
+				mass[j + 1] = temp;
+			}
+		}
+	}
+
+	fseek(file, 0, SEEK_SET); // Перемещение указателя файла в начало
+	for (int i = 0; i < 10; i++)
+	{
+		fprintf(file, "%d %d %d\n", mass[i].score, mass[i].killEnemy, mass[i].life);
+	}
+
+	fclose(file);
+	free(mass);
+}
+
+
+Score* PrintScoreTable(const char* fileName)
+{
+	FILE* file;
+	errno_t err = fopen_s(&file, fileName, "r");
+	if (err != 0 || file == NULL)
+	{
+		printf("Ошибка при открытии файла\n");
+		exit(1);
+	}
+	Score* mass;
+	mass = (Score*)malloc(10 * sizeof(Score));
+	if (mass == NULL)
+	{
+		printf("Ошибка при выделении памяти\n");
+		fclose(file);
+		return NULL;
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		fscanf_s(file, "%d %d %d\n", &mass[i].score, &mass[i].killEnemy, &mass[i].life);
+	}
+
+	fclose(file);
+
+	for (int i = 0; i < 10; i++)
+	{
+		printf("%d %d %d\n", mass[i].score, mass[i].killEnemy, mass[i].life);
+	}
+	free(mass);
+
+	return mass;
+}
+
+
+
+
+
+//int hp;
+//int score;
+//int life;
