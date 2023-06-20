@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < 100; i++)
 		direction_enemy[i] = 0;
 
-	int direction_enemy = 0;
+
 
 
 	TTF_Font* font = TTF_OpenFont("retro-land-mayhem.ttf", 25);
