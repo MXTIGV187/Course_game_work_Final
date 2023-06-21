@@ -79,5 +79,7 @@ void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, 
 void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright);
 void SaveScoreTable(Player* player, const char* fileName);
 Score* PrintScoreTable(const char* fileName);
+void EnemySave(Enemy** enemy, const char* fileName, int ZOMBIE_COUNT, int SHOOTER_COUNT);
+void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOOTER_COUNT);
 
 #endif
