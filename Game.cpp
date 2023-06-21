@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
 
     bool running = 0;
     bool main_menu = 1;
+    bool score_window = 0;
     SDL_Rect dst_enem_rect[100] = { 0,0,0,0 };
     Init(&window, &renderer, &screen_surface);
 
@@ -63,6 +64,10 @@ int main(int argc, char* argv[])
     char load_game[100] = "Load game ";
     SDL_Surface* load_surf = TTF_RenderText_Blended(font, load_game, { 180,0,0,255 });
     SDL_Texture* load_tex = SDL_CreateTextureFromSurface(renderer, load_surf);
+
+    char score_menu[100] = "Load game ";
+    SDL_Surface* scoremenu_surf = TTF_RenderText_Blended(font, score_menu, { 180,0,0,255 });
+    SDL_Texture* scoremenu_tex = SDL_CreateTextureFromSurface(renderer, scoremenu_surf);
 
     char exit_game[100] = "Exit game ";
     SDL_Surface* exit_surf = TTF_RenderText_Blended(font, exit_game, { 180,0,0,255 });
@@ -255,6 +260,16 @@ int main(int argc, char* argv[])
         SDL_RenderFillRect(renderer, &Score_menu);
         SDL_RenderDrawRect(renderer, &Score_menu);
 
+        SDL_Rect score_menu_rect = { 45 ,800,80,100 };
+
+        sprintf_s(score_menu, "Score");
+
+        if ((scoremenu_tex) != NULL)
+            SDL_DestroyTexture(scoremenu_tex);
+        scoremenu_tex = Load_Texture_Font(score_menu, font, &score_menu_rect, { 255,0,0,255 }, renderer);
+        score_menu_rect = { 935 ,800,150,100 };
+        SDL_RenderCopy(renderer, scoremenu_tex, NULL, &score_menu_rect);
+
 
 
 
@@ -327,6 +342,13 @@ int main(int argc, char* argv[])
         if (SDL_PointInRect(&point, &RectExit) && LeftButton == 1)
         {
             main_menu = 0;
+        }
+
+        if (SDL_PointInRect(&point, &Score_menu) && LeftButton == 1)
+        {
+
+            main_menu = 0;
+            score_window = 1;
         }
 
 
@@ -496,24 +518,24 @@ int main(int argc, char* argv[])
         //  paralax_bg2_rect.x = 0;
         //}
 
-        if (playerRect->x >= WINDOW_WIDTH / 2 && isright) {
-            player->x = WINDOW_WIDTH / 2;
-            back_rect.x -= 3;
-            for (int j = 0; j < sizeArray; j++) {
-                (*CollisArray + j)->x -= 3;
-            }
-            for (int i = 0; i < ZOMBIE_COUNT; i++) {
-                if (enemy[i] != NULL)
-                {
-                    enemy[i]->x -= 3;
-                }
-            }
-            for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
-                if (enemy[i] != NULL)
-                {
-                    enemy[i]->x -= 3;
-                }
-            }
+		if (player->x >= WINDOW_WIDTH / 2 && isright) {
+			player->x = WINDOW_WIDTH / 2;
+			back_rect.x-=3;
+			for (int j = 0; j < sizeArray; j++) {
+				(*CollisArray + j)->x-=3;
+			}
+			for (int i = 0; i < ZOMBIE_COUNT; i++) {
+				if(enemy[i] != NULL)
+				{
+					enemy[i]->x-=3;
+				}
+			}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x-=3;
+				}
+			}
 
             damage_rect.x -= 3;
             speed_rect.x -= 3;
@@ -540,26 +562,26 @@ int main(int argc, char* argv[])
             shotgun_frect->x -= 3;
 
 
-        }
-        else if (playerRect->x >= WINDOW_WIDTH / 2 && isleft)
-        {
-            player->x = WINDOW_WIDTH / 2;
-            back_rect.x += 3;
-            for (int j = 0; j < sizeArray; j++) {
-                (*CollisArray + j)->x += 3;
-            }
-            for (int i = 0; i < ZOMBIE_COUNT; i++) {
-                if (enemy[i] != NULL)
-                {
-                    enemy[i]->x += 3;
-                }
-            }
-            for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
-                if (enemy[i] != NULL)
-                {
-                    enemy[i]->x += 3;
-                }
-            }
+		}
+		else if (player->x >= WINDOW_WIDTH / 2 - 10 && isleft) 
+		{
+			player->x = WINDOW_WIDTH / 2;
+			back_rect.x +=3;
+			for (int j = 0; j < sizeArray; j++) {
+				(*CollisArray + j)->x +=3;
+			}
+			for (int i = 0; i < ZOMBIE_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x +=3;
+				}
+			}
+			for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT; i++) {
+				if (enemy[i] != NULL)
+				{
+					enemy[i]->x +=3;
+				}
+			}
 
             damage_rect.x += 3;
             speed_rect.x += 3;
@@ -597,20 +619,20 @@ int main(int argc, char* argv[])
 
 
         if (isright) {
-            paralax_bg1_rect.x -= 1;
-            paralax_bg11_rect.x -= 1;
-            paralax_bg111_rect.x -= 1;
-            paralax_bg2_rect.x -= 2;
-            paralax_bg22_rect.x -= 2;
-            paralax_bg222_rect.x -= 2;
+            paralax_bg1_rect.x -= 3;
+            paralax_bg11_rect.x -= 3;
+            paralax_bg111_rect.x -= 3;
+            paralax_bg2_rect.x -= 4;
+            paralax_bg22_rect.x -= 4;
+            paralax_bg222_rect.x -= 4;
         }
         if (isleft) {
-            paralax_bg1_rect.x += 1;
-            paralax_bg11_rect.x += 1;
-            paralax_bg111_rect.x += 1;
-            paralax_bg2_rect.x += 2;
-            paralax_bg22_rect.x += 2;
-            paralax_bg222_rect.x += 2;
+            paralax_bg1_rect.x += 3;
+            paralax_bg11_rect.x += 3;
+            paralax_bg111_rect.x += 3;
+            paralax_bg2_rect.x += 4;
+            paralax_bg22_rect.x += 4;
+            paralax_bg222_rect.x += 4;
         }
 
 
@@ -634,35 +656,35 @@ int main(int argc, char* argv[])
 
 
 
-        if (paralax_bg1_rect.x >= WINDOW_WIDTH) {
+        if (paralax_bg1_rect.x >= 3840) {
             paralax_bg1_rect.x = -1920;
             dst_rect_bg1 = { paralax_bg1_rect.x, paralax_bg1_rect.y, paralax_bg1_rect.w, paralax_bg1_rect.h };
             SDL_RenderCopy(renderer, paralax_bg1_tex, NULL, &dst_rect_bg1);
         }
 
-        if (paralax_bg11_rect.x >= WINDOW_WIDTH) {
+        if (paralax_bg11_rect.x >3840) {
             paralax_bg11_rect.x = -1920;
             dst_rect_bg11 = { paralax_bg11_rect.x, paralax_bg11_rect.y, paralax_bg11_rect.w, paralax_bg11_rect.h };
             SDL_RenderCopy(renderer, paralax_bg11_tex, NULL, &dst_rect_bg11);
         }
         if (paralax_bg111_rect.x >= 3840) {
-            paralax_bg111_rect.x = 1920;
+            paralax_bg111_rect.x = -1920;
             dst_rect_bg111 = { paralax_bg111_rect.x, paralax_bg111_rect.y, paralax_bg111_rect.w, paralax_bg111_rect.h };
             SDL_RenderCopy(renderer, paralax_bg111_tex, NULL, &dst_rect_bg111);
-        }
+        }       
 
-        if (paralax_bg1_rect.x <= -WINDOW_WIDTH) {
-            paralax_bg1_rect.x = 0;
+        if (paralax_bg1_rect.x <= -3840) {
+            paralax_bg1_rect.x = 1920;
             dst_rect_bg1 = { paralax_bg1_rect.x, paralax_bg1_rect.y, paralax_bg1_rect.w, paralax_bg1_rect.h };
             SDL_RenderCopy(renderer, paralax_bg1_tex, NULL, &dst_rect_bg1);
         }
 
         if (paralax_bg11_rect.x <= -3840) {
-            paralax_bg11_rect.x = -1920;
+            paralax_bg11_rect.x = 1920;
             dst_rect_bg11 = { paralax_bg11_rect.x, paralax_bg11_rect.y, paralax_bg11_rect.w, paralax_bg11_rect.h };
             SDL_RenderCopy(renderer, paralax_bg11_tex, NULL, &dst_rect_bg11);
         }
-        if (paralax_bg111_rect.x >= 0) {
+        if (paralax_bg111_rect.x < -3840) {
             paralax_bg111_rect.x = 1920;
             dst_rect_bg111 = { paralax_bg111_rect.x, paralax_bg111_rect.y, paralax_bg111_rect.w, paralax_bg111_rect.h };
             SDL_RenderCopy(renderer, paralax_bg111_tex, NULL, &dst_rect_bg111);
@@ -671,22 +693,39 @@ int main(int argc, char* argv[])
 
 
 
-        if (paralax_bg2_rect.x >= WINDOW_WIDTH) {
+        if (paralax_bg2_rect.x >= 3840) {
             paralax_bg2_rect.x = -1920;
             dst_rect_bg2 = { paralax_bg2_rect.x, paralax_bg2_rect.y, paralax_bg2_rect.w, paralax_bg2_rect.h };
             SDL_RenderCopy(renderer, paralax_bg2_tex, NULL, &dst_rect_bg2);
         }
 
-        if (paralax_bg22_rect.x >= WINDOW_WIDTH) {
+        if (paralax_bg22_rect.x >= 3840) {
             paralax_bg22_rect.x = -1920;
             dst_rect_bg22 = { paralax_bg22_rect.x, paralax_bg22_rect.y, paralax_bg22_rect.w, paralax_bg22_rect.h };
             SDL_RenderCopy(renderer, paralax_bg22_tex, NULL, &dst_rect_bg22);
         }
         if (paralax_bg222_rect.x >= 3840) {
+            paralax_bg222_rect.x = -1920;
+            dst_rect_bg222 = { paralax_bg222_rect.x, paralax_bg222_rect.y, paralax_bg222_rect.w, paralax_bg222_rect.h };
+            SDL_RenderCopy(renderer, paralax_bg222_tex, NULL, &dst_rect_bg222);
+        }
+        if (paralax_bg2_rect.x <= -3840) {
+            paralax_bg2_rect.x = 1920;
+            dst_rect_bg2 = { paralax_bg2_rect.x, paralax_bg2_rect.y, paralax_bg2_rect.w, paralax_bg2_rect.h };
+            SDL_RenderCopy(renderer, paralax_bg2_tex, NULL, &dst_rect_bg2);
+        }
+        if (paralax_bg22_rect.x <= -3840) {
+            paralax_bg22_rect.x = 1920;
+            dst_rect_bg22 = { paralax_bg22_rect.x, paralax_bg22_rect.y, paralax_bg22_rect.w, paralax_bg22_rect.h };
+            SDL_RenderCopy(renderer, paralax_bg22_tex, NULL, &dst_rect_bg22);
+        }
+        if (paralax_bg222_rect.x <= -3840) {
             paralax_bg222_rect.x = 1920;
             dst_rect_bg222 = { paralax_bg222_rect.x, paralax_bg222_rect.y, paralax_bg222_rect.w, paralax_bg222_rect.h };
             SDL_RenderCopy(renderer, paralax_bg222_tex, NULL, &dst_rect_bg222);
         }
+
+        
 
         SDL_RenderCopy(renderer, back_tex, NULL, &dst_rect_bg);
 
@@ -742,7 +781,7 @@ int main(int argc, char* argv[])
 
         }
 
-        else if ((animate_run && fire) == false)
+        else if ((animate_run || fire) == false)
         {
 
             cur_frametime += dt;
