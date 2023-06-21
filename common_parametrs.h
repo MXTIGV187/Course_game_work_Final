@@ -11,9 +11,6 @@
 #define DIR_LEFT  2
 
 
-#define ZOMBIE_COUNT 1
-#define SHOOTER_COUNT 5
-
 /*
 * рср мсфмн опндхтюимхрэ пюулепш нймю
 * йнкхвеярбн тоя

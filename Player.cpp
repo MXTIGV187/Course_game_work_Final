@@ -393,6 +393,68 @@ Score* PrintScoreTable(const char* fileName)
 	return mass;
 }
 
+void EnemySave(Enemy** enemy, const char* fileName, int ZOMBIE_COUNT, int SHOOTER_COUNT)
+{
+	FILE* file;
+	errno_t err = fopen_s(&file, fileName, "w");
+	if (err != 0)
+	{
+		printf("Ошибка открытия файла\n");
+		exit(1);
+	}
+
+	fprintf(file, "%d\n", ZOMBIE_COUNT);
+
+	for (int i = 0; i < ZOMBIE_COUNT; i++)
+	{
+		fprintf(file, "%d %d\n", enemy[i]->x, enemy[i]->y);
+	}
+
+	fprintf(file, "%d\n", SHOOTER_COUNT);
+
+	for (int i = ZOMBIE_COUNT; i < ZOMBIE_COUNT + SHOOTER_COUNT; i++)
+	{
+		fprintf(file, "%d %d\n", enemy[i]->x, enemy[i]->y);
+	}
+
+	fclose(file);
+}
+void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOOTER_COUNT)
+{
+	FILE* file;
+	errno_t err = fopen_s(&file, fileName, "r");
+	if (err != 0)
+	{
+		printf("Ошибка открытия файла\n");
+		exit(1);
+	}
+
+	int x = 0, y = 0;
+
+	fscanf_s(file, "%d\n", &ZOMBIE_COUNT);
+
+	for (int i = 0; i < ZOMBIE_COUNT; i++)
+	{
+		fscanf_s(file, "%d %d\n", &x, &y);
+		enemy[i] = EnemyInit(100, x, y, 0, 0, Zombie);  
+		x = 0;
+		y = 0;
+	}
+
+	fscanf_s(file, "%d\n", &SHOOTER_COUNT);
+
+	for (int i = ZOMBIE_COUNT; i < ZOMBIE_COUNT + SHOOTER_COUNT; i++)
+	{
+		fscanf_s(file, "%d %d\n", &x, &y);
+		enemy[i] = EnemyInit(100, x, y, 0, 0, Shooter);        
+		x = 0;
+		y = 0;
+	}
+
+	fclose(file);
+}
+
+
 
 
 
