@@ -8,7 +8,8 @@ struct Bonus;
 enum EnemyType
 {
 	Zombie,
-	Shooter
+	Shooter,
+	Rocket_man
 };
 
 struct Player
@@ -59,6 +60,16 @@ struct Bullet
 	SDL_Texture* texture;
 };
 
+struct Rocket {
+	
+	float x;
+	float y;
+	float speed;
+	
+
+
+};
+
 struct Score
 {
 	int life;
@@ -75,7 +86,7 @@ void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_
 SDL_FRect* checkCollision(SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray);
 void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt, bool& isup,
 	bool& isdown, bool& isleft, bool& isright, mainPhysics* mainPhys, SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray);
-void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, bool& running);
+void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, bool& running, bool& main_menu);
 void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright);
 void SaveScoreTable(Player* player, const char* fileName);
 Score* PrintScoreTable(const char* fileName);

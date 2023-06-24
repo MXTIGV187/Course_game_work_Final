@@ -262,7 +262,7 @@ void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_
 		}
 }
 
-void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, bool& running)
+void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, bool& running, bool&main_menu)
 {
 	if (player->hp <= 0)
 	{
@@ -284,6 +284,7 @@ void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, 
 	if (player->life <= 0)
 	{
 		running = 0;
+		
 	}
 }
 void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright) {
@@ -388,7 +389,7 @@ Score* PrintScoreTable(const char* fileName)
 	{
 		printf("%d %d %d\n", mass[i].score, mass[i].killEnemy, mass[i].life);
 	}
-	free(mass);
+	
 
 	return mass;
 }
