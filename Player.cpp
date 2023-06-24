@@ -59,6 +59,16 @@ Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up
 	return bullet;
 }
 
+Rocket* RocketInit(float x, float y, float speed, float angle)
+{
+	Rocket* rocket = (Rocket*)malloc(sizeof(Rocket));
+	rocket->x = x;
+	rocket->y = y;
+	rocket->speed = speed;
+	rocket->angle = angle;
+	return rocket;
+}
+
 SDL_FRect* checkCollision(SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray)
 {
 	SDL_FRect* CollisRect = NULL;
@@ -427,33 +437,7 @@ Score* PrintScoreTable(const char* fileName)
 	return mass;
 }
 
-void EnemySave(Enemy** enemy, const char* fileName, int ZOMBIE_COUNT, int SHOOTER_COUNT)
-{
-	FILE* file;
-	errno_t err = fopen_s(&file, fileName, "w");
-	if (err != 0)
-	{
-		printf("Ошибка открытия файла\n");
-		exit(1);
-	}
-
-	fprintf(file, "%d\n", ZOMBIE_COUNT);
-
-	for (int i = 0; i < ZOMBIE_COUNT; i++)
-	{
-		fprintf(file, "%d %d\n", enemy[i]->x, enemy[i]->y);
-	}
-
-	fprintf(file, "%d\n", SHOOTER_COUNT);
-
-	for (int i = ZOMBIE_COUNT; i < ZOMBIE_COUNT + SHOOTER_COUNT; i++)
-	{
-		fprintf(file, "%d %d\n", enemy[i]->x, enemy[i]->y);
-	}
-
-	fclose(file);
-}
-void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOOTER_COUNT)
+void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOOTER_COUNT, int& ROCKET_COUNT)
 {
 	FILE* file;
 	errno_t err = fopen_s(&file, fileName, "r");
@@ -484,7 +468,15 @@ void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOO
 		x = 0;
 		y = 0;
 	}
+	fscanf_s(file, "%d\n", &SHOOTER_COUNT);
 
+	for (int i = ZOMBIE_COUNT + SHOOTER_COUNT; i < ZOMBIE_COUNT + SHOOTER_COUNT + ROCKET_COUNT; i++)
+	{
+		fscanf_s(file, "%d %d\n", &x, &y);
+		enemy[i] = EnemyInit(150, x, y, 0, 0, Rocket_man);
+		x = 0;
+		y = 0;
+	}
 	fclose(file);
 }
 

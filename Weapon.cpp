@@ -27,7 +27,7 @@ Bonus* bonusInit(float x, float y, BonusType type, Uint32 lifeTime)
 }
 
 void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, bool& shootLeft, bool& shootUp, bool& shootDown, int& direction, int& n, Bullet** bullet, SDL_FRect* playerRect,
-	int& dt, SDL_FRect** bulletRect, Enemy** enemy, SDL_FRect** enemyRect, SDL_FRect** enemyRadius, Player* player, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int& PowerfulTiming, int& PoorTiming, int ZOMBIE_COUNT, int SHOOTER_COUNT)
+	int& dt, SDL_FRect** bulletRect, Enemy** enemy, SDL_FRect** enemyRect, SDL_FRect** enemyRadius, Player* player, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int& PowerfulTiming, int& PoorTiming, int ZOMBIE_COUNT, int SHOOTER_COUNT, int ROCKET_COUNT)
 {
 	//На лазер бонус скорости не действует
 	if (player->bonus != NULL)
@@ -775,7 +775,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 					free(bulletRect[i]);
 				}
 			}
-			for (int j = 0; j < ZOMBIE_COUNT + SHOOTER_COUNT; j++)
+			for (int j = 0; j < ZOMBIE_COUNT + SHOOTER_COUNT + ROCKET_COUNT; j++)
 				if (enemy[j] != NULL)
 				{
 					if (SDL_HasIntersectionF(bulletRect[i], enemyRect[j]))
@@ -831,7 +831,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 	}
 }
 
-void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemyBullet, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int* direction_enemy, int ZOMBIE_COUNT, int SHOOTER_COUNT)
+void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemyBullet, Rocket** rocket, SDL_FRect** rocketRect, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int* direction_enemy, int ZOMBIE_COUNT, int SHOOTER_COUNT, int ROCKET_COUNT)
 {
 	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT; i++)
 	{
@@ -864,6 +864,49 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 				}
 			}
 	}
+	for (int i = ZOMBIE_COUNT + SHOOTER_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT + ROCKET_COUNT; i++)
+	{
+		if (enemy[i] != NULL && player != NULL)
+			if (enemy[i]->type == Rocket_man && SDL_HasIntersectionF(enemyRadius[i], playerRect))
+			{
+				if (newtime - lastShotTimeEnemy[i] >= 1000)
+				{
+					if (playerRect->x >= enemyRect[i]->x)
+					{
+						direction_enemy[i] = DIR_RIGHT;
+						//direction
+
+						rocket[n_enemy++] = RocketInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1);
+
+					}
+					else if (playerRect->x <= enemyRect[i]->x)
+					{
+						direction_enemy[i] = DIR_LEFT;
+						//direction
+
+						rocket[n_enemy++] = RocketInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1);
+					}
+					/*	else if (shootUp == 1)
+							enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 500, 0, 0, 1, 0, true, 0, 0);
+						else if (shootDown == 1)
+							enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 500, 0, 0, 0, 1, true, 0, 0);*/
+
+					lastShotTimeEnemy[i] = SDL_GetTicks();
+				}
+			}
+	}
+	for (int i = 0; i < 100; i++)
+		if (enemyBullet[i] != NULL && player != NULL)
+		{
+			rocketRect[i] = InitObject(enemyBullet[i]->x, enemyBullet[i]->y, 10, 10);
+			//Cюда свой код
+			//
+			//
+			//
+
+			// 
+			//логику короче
+		}
 	for (int i = 0; i < 100; i++)
 		if (enemyBullet[i] != NULL && player != NULL)
 		{
