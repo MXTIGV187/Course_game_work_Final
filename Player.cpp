@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "common_parametrs.h"
 
-Player* PlayerInit(int hp, int score, int life, float x, float y, bool is_die, bool is_jump, bool upToPlatform, int killEnemy, Weapon* weapon, Bonus* bonus)
+Player* PlayerInit(int hp, int score, int life, float x, float y, bool is_die, bool is_jump, bool upToPlatform, bool bossFight, int killEnemy, Weapon* weapon, Bonus* bonus, bool level1_complete, bool level2_complete, bool level3_complete)
 {
 	Player* player = (Player*)malloc(sizeof(Player));
 	player->hp = hp;
@@ -15,8 +15,12 @@ Player* PlayerInit(int hp, int score, int life, float x, float y, bool is_die, b
 	player->is_jump = is_jump;
 	player->is_die = is_die;
 	player->upToPlatform = upToPlatform;
+	player->bossFight;
 	player->weapon = weapon;
 	player->bonus = bonus;
+	player->level1_complete = level1_complete;
+	player->level2_complete = level2_complete;
+	player->level3_complete = level3_complete;
 	return player;
 }
 
@@ -71,7 +75,7 @@ SDL_FRect* checkCollision(SDL_FRect* playerRect, SDL_FRect* CollisArray, int& si
 
 
 void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt, bool& isup,
-	bool& isdown, bool& isleft, bool& isright, mainPhysics* mainPhys, SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray)
+	bool& isdown, bool& isleft, bool& isright, mainPhysics* mainPhys, SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray, SlopePlatform* platform, int& sizePoint)
 {
 	SDL_FRect* CollisRect = checkCollision(playerRect, CollisArray, sizeArray);
 	if (SDL_HasIntersectionF(playerRect, CollisRect))
@@ -110,23 +114,52 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 				}
 			}
 		}
+	}
+	if (sizePoint > 0)
+	{
+		SDL_FPoint* point[1000];
+		for (int i = 0; i < 1000; i++)
+			point[i] = NULL;
+		int count = 0;
+		for (int i = 0; i < sizePoint; i++)
+		{
+			if (player->x > platform[i].x2 && player->x < platform[i].x1)
+			{
+				count = platform[i].x1 - platform[i].x2;
 
-
+				for (int k = 0; k < count; k++)
+				{
+					point[k]->x = platform[i].x2 + k;
+					point[k]->y = platform[i].y2 - 0.305 * k;
+				}
+			}
+		}
+		for (int k = 0; k < count; k++)
+			if (SDL_PointInFRect(point[k], playerRect))
+			{
+				player->y -= mainPhys->gravity * dt / 10000;
+				last_y = player->y;
+				player->is_jump = 0;
+				dy = 0;
+			}
 	}
 
 	if (isup)
 	{
-		player->upToPlatform = 0;
 		if (player->is_jump == 0)
 		{
+			player->upToPlatform = 0;
 			player->y -= mainPhys->gravity * dt / 1000;
 			new_y = player->y;
 			dy = last_y - new_y;
 			if (dy >= 300)
+			{
 				isup = 0;
+			}
 		}
 		else
 		{
+			player->upToPlatform = 1;
 			player->y += mainPhys->gravity * dt / 1000;
 		}
 
@@ -177,7 +210,7 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 		}
 	}
 	if (player->y > 1000)
-		player->is_die = 1;     
+		player->is_die = 1;
 
 }
 
@@ -436,7 +469,7 @@ void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOO
 	for (int i = 0; i < ZOMBIE_COUNT; i++)
 	{
 		fscanf_s(file, "%d %d\n", &x, &y);
-		enemy[i] = EnemyInit(100, x, y, 0, 0, Zombie);  
+		enemy[i] = EnemyInit(100, x, y, 0, 0, Zombie);
 		x = 0;
 		y = 0;
 	}
@@ -446,7 +479,7 @@ void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOO
 	for (int i = ZOMBIE_COUNT; i < ZOMBIE_COUNT + SHOOTER_COUNT; i++)
 	{
 		fscanf_s(file, "%d %d\n", &x, &y);
-		enemy[i] = EnemyInit(100, x, y, 0, 0, Shooter);        
+		enemy[i] = EnemyInit(100, x, y, 0, 0, Shooter);
 		x = 0;
 		y = 0;
 	}
@@ -454,6 +487,59 @@ void EnemyLoad(Enemy** enemy, const char* fileName, int& ZOMBIE_COUNT, int& SHOO
 	fclose(file);
 }
 
+void SaveProgress(Player* player, Weapon* weapon, const char* fileName)
+{
+	FILE* file;
+	fopen_s(&file, fileName, "wb");
+	if (file == NULL)
+	{
+		printf("Ошибка открытия файла\n");
+		return;
+	}
+
+	fwrite(player, sizeof(Player), 1, file);
+
+
+	if (player->weapon != nullptr)
+	{
+		fwrite(player->weapon, sizeof(Weapon), 1, file);
+	}
+
+	fclose(file);
+}
+
+Player* LoadProgress(const char* fileName)
+{
+
+	Player* player = new Player();
+
+	FILE* file;
+	fopen_s(&file, fileName, "rb");
+	if (file == NULL)
+	{
+		printf("Ошибка открытия файла\n");
+		return nullptr;
+	}
+
+	// Читаем данные структуры Player из файла
+	fread(player, sizeof(Player), 1, file);
+
+	player->bonus = nullptr;
+	player->x = 300;
+	player->y = 300;
+	player->bossFight = 0;
+
+	// Читаем данные оружия (Weapon), если присутствуют
+	if (player->weapon != nullptr)
+	{
+		player->weapon = new Weapon(); // Создаем новый объект оружия
+		fread(player->weapon, sizeof(Weapon), 1, file);
+	}
+
+	fclose(file);
+
+	return player;
+}
 
 
 
