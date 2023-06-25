@@ -26,10 +26,13 @@ int main(int argc, char* argv[])
 
 	srand(time(NULL));
 	SDL_Rect dst_rect = { 0,0,0,0 };
+	SDL_Rect dst_rect_lv2 = { 0,0,0,0 };
+	SDL_Rect dst_rect_lv3 = { 0,0,0,0 };
 
 	SDL_Rect dst_rect_score = { 0,0,0,0 };
 
 	SDL_Rect dst_rect_bg = { 0,0,0,0 };
+
 
 	SDL_Rect dst_rect_bg1 = { 0,0,0,0 };
 	SDL_Rect dst_rect_bg11 = { 0,0,0,0 };
@@ -50,6 +53,7 @@ int main(int argc, char* argv[])
 	bool hero_three = 0;
 
 	Score* mass_score = PrintScoreTable("ScoreTable.txt");
+
 
 	SDL_Rect dst_enem_rect[100] = { 0,0,0,0 };
 	SDL_Rect dst_enem_rocket_rect = { 0,0,0,0 };
@@ -91,6 +95,10 @@ int main(int argc, char* argv[])
 	char choice_skin[100] = "Choice ";
 	SDL_Surface* choice_skin_surf = TTF_RenderText_Blended(font, choice_skin, { 180,0,0,255 });
 	SDL_Texture* choice_skin_tex = SDL_CreateTextureFromSurface(renderer, choice_skin_surf);
+
+	char countinue[100] = "Countinue ";
+	SDL_Surface* countinue_surf = TTF_RenderText_Blended(font, countinue, { 180,0,0,255 });
+	SDL_Texture* countinue_tex = SDL_CreateTextureFromSurface(renderer, countinue_surf);
 
 
 
@@ -139,6 +147,21 @@ int main(int argc, char* argv[])
 	SDL_Surface* scorenine_surf = TTF_RenderText_Blended(font, score_nine, { 180,0,0,255 });
 	SDL_Texture* scorenine_tex = SDL_CreateTextureFromSurface(renderer, scorenine_surf);
 
+	char saveone[50] = "save";
+
+	SDL_Surface* saveone_surf = TTF_RenderText_Blended(font, saveone, { 180,0,0,255 });
+	SDL_Texture* saveone_tex = SDL_CreateTextureFromSurface(renderer, saveone_surf);
+
+	char savetwo[50] = "save";
+
+	SDL_Surface* savetwo_surf = TTF_RenderText_Blended(font, savetwo, { 180,0,0,255 });
+	SDL_Texture* savetwo_tex = SDL_CreateTextureFromSurface(renderer, savetwo_surf);
+
+	char savethree[50] = "save";
+
+	SDL_Surface* savethree_surf = TTF_RenderText_Blended(font, savethree, { 180,0,0,255 });
+	SDL_Texture* savethree_tex = SDL_CreateTextureFromSurface(renderer, savethree_surf);
+
 
 
 
@@ -174,7 +197,13 @@ int main(int argc, char* argv[])
 
 
 	SDL_Rect back_rect;
-	SDL_Texture* back_tex = loadTextureFromFile("LEVEL2.png", &back_rect, window, renderer, screen_surface);
+	SDL_Texture* back_tex = loadTextureFromFile("LEVEL1.png", &back_rect, window, renderer, screen_surface);
+
+	SDL_Rect level2_back;
+	SDL_Texture* level2_Back = loadTextureFromFile("LEVEL2.png", &level2_back, window, renderer, screen_surface);
+
+	SDL_Rect level3_back;
+	SDL_Texture* level3_Back = loadTextureFromFile("LEVEL3.png", &level3_back, window, renderer, screen_surface);
 
 
 
@@ -268,10 +297,7 @@ int main(int argc, char* argv[])
 	//
 	int respawn_x = 300;
 	int respawn_y = 300;
-	Player* player = PlayerInit(10000, 100, 3, respawn_x, respawn_y, 0, 1, 0, 0, 0, rifle, NULL, 0, 0, 0);
-	//Player* player = LoadProgress("SlotSave1.txt");
 	mainPhysics* mainPhys = PhysInit(200, 250);
-
 	Uint32 lastShotTime = SDL_GetTicks();
 	Uint32 lastShotTimeEnemy[200];
 	Uint32 lastShotTimeBoss[100];
@@ -280,14 +306,8 @@ int main(int argc, char* argv[])
 	{
 		lastShotRocket[i] = SDL_GetTicks();
 	}
-
-
 	Enemy* enemy[200];
-	int ZOMBIE_COUNT = 0, SHOOTER_COUNT = 0, ROCKET_COUNT = 1;
-	// “ут читать
-
-
-	//EnemySave(enemy, "EnemyLevel1.txt", ZOMBIE_COUNT, SHOOTER_COUNT);
+	int ZOMBIE_COUNT = 0, SHOOTER_COUNT = 0, ROCKET_COUNT = 0;
 	SDL_Rect enemy_rect_zombie;
 	SDL_Texture* enemy_tex_idle = loadTextureFromFile("Idle_zombie.png", &enemy_rect_zombie, window, renderer, screen_surface);
 	enemy_rect_zombie.w = enemy_rect_zombie.h;
@@ -295,8 +315,6 @@ int main(int argc, char* argv[])
 	SDL_Rect enemy_rect_shooter;
 	SDL_Texture* enemy_shooter_tex_idle = loadTextureFromFile("Gunner_Blue_Idle.png", &enemy_rect_shooter, window, renderer, screen_surface);
 	enemy_rect_shooter.w = enemy_rect_shooter.h;
-
-
 
 	SDL_Rect enemy_rect_rocket;
 	SDL_Texture* enemy_rocket_tex_idle = loadTextureFromFile("Gunner_Green_Idle.png", &enemy_rect_rocket, window, renderer, screen_surface);
@@ -310,15 +328,12 @@ int main(int argc, char* argv[])
 	SDL_FRect* bossBulletRect[1000];
 	Rocket* rocket[100];
 	SDL_FRect* rocketRect[100];
-
 	SDL_Rect bullet_rect;
 	SDL_Texture* bullet_tex = loadTextureFromFile("bullet1.png", &bullet_rect, window, renderer, screen_surface);
 	SDL_Texture* fire_tex = loadTextureFromFile("Shot_1.png", &player_rect, window, renderer, screen_surface);
 
 	SDL_Rect logo_rect;
 	SDL_Texture* logo_tex = loadTextureFromFile("contra-logo.png", &logo_rect, window, renderer, screen_surface);
-
-
 	player_rect.w = player_rect.h;
 	bool LeftButton = 0;
 	int mouseX;
@@ -327,17 +342,40 @@ int main(int argc, char* argv[])
 	SDL_Rect HeroChoice;
 	SDL_Rect RectExit;
 	SDL_Rect HeroOne;
+	SDL_Rect SaveOne;
+	SDL_Rect SaveTwo;
+	SDL_Rect SaveThree;
 	SDL_Rect HeroTwo;
 	SDL_Rect HeroThree;
-	//PrintScoreTable("ScoreTable.txt");
 	SDL_Rect Score_menu;
-	SDL_Rect About;
+	SDL_Rect Countinue_rect;
 	SDL_Rect LoadGame;
 	bool escape = 0;
+
+	bool newgame = 0;
+	bool continue_level = 0;
+	bool level2_start = 0;
+	bool level3_start = 0;
+
+	bool slot1_active = 0;
+	bool slot2_active = 0;
+	bool slot3_active = 0;
+	bool active = 0;
+
+	bool quicsave = 0;
+
+	Player* progress1;
+	Player* progress2;
+	Player* progress3;
+
+
+
+
 	while (main_menu || running || score_window || hero_choice || load_window) {
 
 		while (main_menu)
 		{
+			Player* player = LoadProgress("reserveSave.txt");
 			SDL_RenderCopy(renderer, logo_tex, &logo_rect, NULL);
 			RectPlay.x = 30; RectPlay.y = 800; RectPlay.h = 100; RectPlay.w = 400;
 
@@ -409,6 +447,22 @@ int main(int argc, char* argv[])
 			score_menu_rect = { 935 ,800,150,100 };
 			SDL_RenderCopy(renderer, scoremenu_tex, NULL, &score_menu_rect);
 
+			Countinue_rect.x = 460; Countinue_rect.y = 920; Countinue_rect.h = 100; Countinue_rect.w = 400;
+			SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+			SDL_RenderFillRect(renderer, &Countinue_rect);
+			SDL_RenderDrawRect(renderer, &Countinue_rect);
+
+			SDL_Rect countinue_menu_rect = { 45 ,800,80,200 };
+
+			sprintf_s(countinue, "    Countinue");
+
+			if ((countinue_tex) != NULL)
+				SDL_DestroyTexture(countinue_tex);
+			scoremenu_tex = Load_Texture_Font(countinue, font, &countinue_menu_rect, { 255,0,0,255 }, renderer);
+			countinue_menu_rect = { 460 ,920,150,100 };
+			SDL_RenderCopy(renderer, countinue_tex, NULL, &countinue_menu_rect);
+
+
 
 
 
@@ -479,6 +533,13 @@ int main(int argc, char* argv[])
 				SDL_RenderFillRect(renderer, &HeroChoice);
 
 			}
+			if (SDL_PointInRect(&point, &Countinue_rect))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &Countinue_rect);
+
+			}
 
 
 			if (SDL_PointInRect(&point, &RectPlay) && LeftButton == 1)
@@ -489,6 +550,7 @@ int main(int argc, char* argv[])
 				LeftButton = 0;
 				load_window = 0;
 				hero_choice = 0;
+				newgame = 1;
 
 			}
 			if (SDL_PointInRect(&point, &RectExit) && LeftButton == 1)
@@ -531,6 +593,17 @@ int main(int argc, char* argv[])
 				load_window = 0;
 				hero_choice = 1;
 
+			}
+			if (SDL_PointInRect(&point, &Countinue_rect) && LeftButton == 1 && player->level1_complete && !player->level3_complete)
+			{
+				running = 1;
+				main_menu = 0;
+				score_window = 0;
+				LeftButton = 0;
+				load_window = 0;
+				hero_choice = 0;
+				continue_level = 1;
+				free(player);
 			}
 
 			SDL_RenderPresent(renderer);
@@ -807,11 +880,6 @@ int main(int argc, char* argv[])
 
 			}
 
-
-
-
-
-
 			SDL_RenderPresent(renderer);
 
 
@@ -819,8 +887,184 @@ int main(int argc, char* argv[])
 		while (load_window)
 		{
 
+
+			SDL_GetMouseState(&mouseX, &mouseY);
+			SDL_Point point;
+			point.x = mouseX; point.y = mouseY;
+
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			SDL_RenderClear(renderer);
+
+			SaveOne.x = 400; SaveOne.y = 400; SaveOne.h = 100; SaveOne.w = 1200;
+
+			SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+			SDL_RenderFillRect(renderer, &SaveOne);
+			SDL_RenderDrawRect(renderer, &SaveOne);
+
+			SaveTwo.x = 400; SaveTwo.y = 550; SaveTwo.h = 100; SaveTwo.w = 1200;
+
+			SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+			SDL_RenderFillRect(renderer, &SaveTwo);
+			SDL_RenderDrawRect(renderer, &SaveTwo);
+
+			SaveThree.x = 400; SaveThree.y = 700; SaveThree.h = 100; SaveThree.w = 1200;
+
+			SDL_SetRenderDrawColor(renderer, 100, 200, 5, 2);
+			SDL_RenderFillRect(renderer, &SaveThree);
+			SDL_RenderDrawRect(renderer, &SaveThree);
+
+			Player* player_slot = LoadProgress("SaveSlot1.txt");
+
+
+			SDL_Rect save_one_rect = { 108,108,50,50 };
+			if (player_slot != NULL)
+			{
+				if (player_slot->level1_complete && !player_slot->level2_complete) {
+					sprintf_s(saveone, "S1:%d         %d             Level2", player_slot->score, player_slot->life);
+					if ((saveone_tex) != NULL)
+						SDL_DestroyTexture(saveone_tex);
+					saveone_tex = Load_Texture_Font(saveone, font, &save_one_rect, { 255,255,255,255 }, renderer);
+					save_one_rect = { 400 ,400,500,100 };
+					SDL_RenderCopy(renderer, saveone_tex, NULL, &save_one_rect);
+					slot1_active = 1;
+				}
+				if (player_slot->level1_complete && player_slot->level2_complete && !player_slot->level3_complete) {
+					sprintf_s(saveone, "S1:%d         %d             Level3", player_slot->score, player_slot->life);
+					if ((saveone_tex) != NULL)
+						SDL_DestroyTexture(saveone_tex);
+					saveone_tex = Load_Texture_Font(saveone, font, &save_one_rect, { 255,255,255,255 }, renderer);
+					save_one_rect = { 400 ,400,500,100 };
+					SDL_RenderCopy(renderer, saveone_tex, NULL, &save_one_rect);
+					slot1_active = 1;
+				}
+			}
+			else
+			{
+				sprintf_s(saveone, "         FREE SLOT             ");
+				if ((saveone_tex) != NULL)
+					SDL_DestroyTexture(saveone_tex);
+				saveone_tex = Load_Texture_Font(saveone, font, &save_one_rect, { 255,255,255,255 }, renderer);
+				save_one_rect = { 400 ,400,500,100 };
+				SDL_RenderCopy(renderer, saveone_tex, NULL, &save_one_rect);
+				slot1_active = 0;
+			}
+
+			player_slot = LoadProgress("SaveSlot2.txt");
+
+
+			SDL_Rect save_two_rect = { 108,108,50,50 };
+			if (player_slot != NULL)
+			{
+				if (player_slot->level1_complete && !player_slot->level2_complete) {
+					sprintf_s(savetwo, "S2:%d         %d             Level2", player_slot->score, player_slot->life);
+					if ((savetwo_tex) != NULL)
+						SDL_DestroyTexture(savetwo_tex);
+					savetwo_tex = Load_Texture_Font(savetwo, font, &save_two_rect, { 255,255,255,255 }, renderer);
+					save_two_rect = { 400 ,550,500,100 };
+					SDL_RenderCopy(renderer, savetwo_tex, NULL, &save_two_rect);
+					slot2_active = 1;
+				}
+				if (player_slot->level1_complete && player_slot->level2_complete && !player_slot->level3_complete) {
+					sprintf_s(savetwo, "S2:%d         %d             Level3", player_slot->score, player_slot->life);
+					if ((savetwo_tex) != NULL)
+						SDL_DestroyTexture(savetwo_tex);
+					savetwo_tex = Load_Texture_Font(savetwo, font, &save_two_rect, { 255,255,255,255 }, renderer);
+					save_two_rect = { 400 ,550,500,100 };
+					SDL_RenderCopy(renderer, savetwo_tex, NULL, &save_two_rect);
+					slot2_active = 1;
+				}
+			}
+			else
+			{
+				sprintf_s(savetwo, "         FREE SLOT             ");
+				if ((savetwo_tex) != NULL)
+					SDL_DestroyTexture(savetwo_tex);
+				savetwo_tex = Load_Texture_Font(savetwo, font, &save_two_rect, { 255,255,255,255 }, renderer);
+				save_two_rect = { 400 ,550,500,100 };
+				SDL_RenderCopy(renderer, savetwo_tex, NULL, &save_two_rect);
+				slot2_active = 0;
+			}
+
+			player_slot = LoadProgress("SaveSlot3.txt");
+
+			SDL_Rect save_three_rect = { 108,108,50,50 };
+			if (player_slot != NULL)
+			{
+				if (player_slot->level1_complete && !player_slot->level2_complete) {
+					sprintf_s(savethree, "S3:%d         %d             Level2", player_slot->score, player_slot->life);
+					if ((savethree_tex) != NULL)
+						SDL_DestroyTexture(savethree_tex);
+					savethree_tex = Load_Texture_Font(savethree, font, &save_three_rect, { 255,255,255,255 }, renderer);
+					save_three_rect = { 400 ,700,500,100 };
+					SDL_RenderCopy(renderer, savethree_tex, NULL, &save_three_rect);
+					slot3_active = 1;
+				}
+				if (player_slot->level1_complete && player_slot->level2_complete && !player_slot->level3_complete) {
+					sprintf_s(savethree, "S3:%d         %d             Level3", player_slot->score, player_slot->life);
+					if ((savethree_tex) != NULL)
+						SDL_DestroyTexture(savethree_tex);
+					savethree_tex = Load_Texture_Font(savethree, font, &save_three_rect, { 255,255,255,255 }, renderer);
+					save_three_rect = { 400 ,700,500,100 };
+					SDL_RenderCopy(renderer, savethree_tex, NULL, &save_three_rect);
+					slot3_active = 1;
+				}
+			}
+			if(player_slot->hp<0)
+			{
+				sprintf_s(savethree, "         FREE SLOT             ");
+				if ((savethree_tex) != NULL)
+					SDL_DestroyTexture(savethree_tex);
+				savethree_tex = Load_Texture_Font(savethree, font, &save_three_rect, { 255,255,255,255 }, renderer);
+				save_three_rect = { 400 ,700,500,100 };
+				SDL_RenderCopy(renderer, savethree_tex, NULL, &save_three_rect);
+				slot3_active = 0;
+			}
+
+
+
+
+			if (SDL_PointInRect(&point, &SaveOne))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &SaveOne);
+
+			}
+			if (SDL_PointInRect(&point, &SaveTwo))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &SaveTwo);
+
+			}
+			if (SDL_PointInRect(&point, &SaveThree))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &SaveThree);
+
+			}
+			if (SDL_PointInRect(&point, &SaveOne))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &SaveOne);
+
+			}
+			if (SDL_PointInRect(&point, &SaveTwo))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &SaveTwo);
+
+			}
+			if (SDL_PointInRect(&point, &SaveThree))
+			{
+
+				SDL_SetRenderDrawColor(renderer, 100, 300, 5, 2);
+				SDL_RenderFillRect(renderer, &SaveThree);
+
+			}
 
 
 
@@ -840,6 +1084,8 @@ int main(int argc, char* argv[])
 					{
 					case SDL_SCANCODE_SPACE: LeftButton = 1; break;
 					case SDL_SCANCODE_L: escape = 1; break;
+					case SDL_SCANCODE_A: active = 1; break;
+					case SDL_SCANCODE_Q: quicsave = 1; break;
 					}
 					break;
 				case SDL_KEYUP:
@@ -847,19 +1093,56 @@ int main(int argc, char* argv[])
 					{
 					case SDL_SCANCODE_SPACE: LeftButton = 0; break;
 					case SDL_SCANCODE_L: escape = 0; break;
+					case SDL_SCANCODE_A: active = 0; break;
+					case SDL_SCANCODE_Q: quicsave = 0; break;
 					}
 					break;
 				}
+			}
+			if (SDL_PointInRect(&point, &SaveOne)&& active && slot1_active)
+			{
+				Player* player_load = LoadProgress("SaveSlot1.txt");
+				SaveProgress(player_load , player_load->weapon, "reserveSlot.txt");
+			}
+			if (SDL_PointInRect(&point, &SaveTwo) && active && slot2_active)
+			{
+				Player* player_load = LoadProgress("SaveSlot2.txt");
+				SaveProgress(player_load, player_load->weapon, "reserveSlot.txt");
+			}
+			if (SDL_PointInRect(&point, &SaveThree) && active && slot3_active)
+			{
+				Player* player_load = LoadProgress("SaveSlot3.txt");
+				SaveProgress(player_load, player_load->weapon, "reserveSlot.txt");
+			}
+			if (SDL_PointInRect(&point, &SaveOne) && quicsave)
+			{
+				Player* player_save = LoadProgress("reserveSave.txt");
+				SaveProgress(player_save, player_save->weapon, "SaveSlot1.txt");
+			}
+			if (SDL_PointInRect(&point, &SaveTwo) && quicsave)
+			{
+				Player* player_save = LoadProgress("reserveSave.txt");
+				SaveProgress(player_save, player_save->weapon, "SaveSlot2.txt");
+			}
+			if (SDL_PointInRect(&point, &SaveThree) && quicsave)
+			{
+				Player* player_save = LoadProgress("reserveSave.txt");
+				SaveProgress(player_save, player_save->weapon, "SaveSlot3.txt");
 			}
 
 			if (escape) {
 				load_window = 0;
 				main_menu = 1;
 				escape = 0;
-
+				running = 0; 
+				score_window = 0; 
+				hero_choice = 0;
 			}
 			SDL_RenderPresent(renderer);
+
+
 		}
+
 
 		int n = 0;
 		int n_enemy = 0;
@@ -918,53 +1201,125 @@ int main(int argc, char* argv[])
 		int debug = 1;
 
 		SDL_FRect* CollisArray[100];
+		for (int i = 0; i < 100; i++)
+		{
+			CollisArray[i] = NULL;
+		}
 		SlopePlatform* platform[100];
-		SDL_FRect* playerRect = InitObject(player->x, player->y, 10, 130);
+
 		SDL_FRect* enemyRect[200];
 		SDL_FRect* enemyRadius[200];
 
 		SDL_FRect* enemyRectRocket;
 		SDL_FRect* enemyRadiusRocket;
+		int sizeArray = 0;
+		int sizePoint = 0;
+		Player* player = LoadProgress("reserveSave.txt");
+		Boss* boss = BossInit(0, 0, 0, 120000, 120000, Level1);
+		SDL_FRect* bossUpRect = NULL;
+		SDL_FRect* bossDownRect = NULL;
+		SDL_FRect* playerRect = NULL;
+		
+		if (newgame)
+		{
+			player = PlayerInit(150, 0, 3, respawn_x, respawn_y, 0, 1, 0, 0, 0, rifle, NULL, 0, 0, 0);
+			playerRect = InitObject(player->x, player->y, 10, 130);
+			MassLoad(*CollisArray, *platform, "level1.txt", sizeArray, sizePoint);
+			EnemyLoad(enemy, "EnemyLevel1.txt", ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
+			boss = BossInit(1000, 45, 1, 15000, 870, Level1);
 
+			newgame = 0;
+		}
+		if (player->level1_complete && !player->level2_complete)
+		{
+			MassLoad(*CollisArray, *platform, "level2.txt", sizeArray, sizePoint);
+				EnemyLoad(enemy, "EnemyLevel2.txt", ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
+			if (level2_start == 0)
+			{
+				level2_start = 1;
+			}
+		}
+		if (player->level1_complete && player->level2_complete && !player->level3_complete)
+		{
+			MassLoad(*CollisArray, *platform, "level3.txt", sizeArray, sizePoint);
+				EnemyLoad(enemy, "EnemyLevel3.txt", ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
+			if(level3_start == 0)
+			{
+				level3_start = 1;
+			}
+		}
 
-
-		EnemyLoad(enemy, "EnemyLevel1.txt", ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
 
 		for (int i = 0; i < ZOMBIE_COUNT; i++)
 		{
-			enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
-			enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+			if (enemy[i] != NULL)
+			{
+				enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+				enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+			}
+
 		}
 		for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT; i++)
 		{
-			enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
-			enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+			if (enemy[i] != NULL)
+			{
+				enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+				enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+			}
+
 		}
 		for (int i = ZOMBIE_COUNT + SHOOTER_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT + ROCKET_COUNT; i++)
 		{
-			enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
-			enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+			if (enemy[i] != NULL)
+			{
+				enemyRect[i] = InitObject(enemy[i]->x, enemy[i]->y, 10, 130);
+				enemyRadius[i] = InitObject(enemy[i]->x, enemy[i]->y, 300, 300);
+			}
+
 		}
 
 		SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 		SDL_RenderClear(renderer);
 
-		int sizeArray = 0;
-		int sizePoint = 0;
-
-		MassLoad(*CollisArray, *platform, "level3.txt", sizeArray, sizePoint);
-		Boss* boss = BossInit(1000, 45, 1, 15000, 870, Level1);
-		SDL_FRect* bossUpRect = NULL;
-		SDL_FRect* bossDownRect = NULL;
 
 
+		SDL_FRect* level3_finish = new SDL_FRect;
+		if (player->level1_complete && player->level2_complete && player->x < 400)
+		{
+			level3_finish->x = 9607;
+			level3_finish->y = 10;
+			level3_finish->w = 20;
+			level3_finish->h = 20;
+		}
+		SDL_FRect* level2_finish = new SDL_FRect;
+		if (player->level1_complete && !player->level3_complete && player->x < 400)
+		{
+			level2_finish->x = 9684;
+			level2_finish->y = 831;
+			level2_finish->w = 270;
+			level2_finish->h = 20;
+		}
 
 		while (running)
 		{
-			  // Array to store the remaining lifespan of each rocket
+			if (player->level1_complete && player->level2_complete)
+				if (SDL_HasIntersectionF(playerRect, level3_finish))
+				{
+					player->level3_complete = 1;
+					SaveProgress(player, player->weapon, "reserveSave.txt");
+					running = 0;
+					main_menu = 1;
+					SaveScoreTable(player, "ScoreTable.txt");
+				}
 
-			// Initialize the rocket lifespan array
-			
+			if (player->level1_complete && !player->level3_complete)
+				if (SDL_HasIntersectionF(playerRect, level2_finish))
+				{
+					player->level2_complete = 1;
+					SaveProgress(player, player->weapon, "reserveSave.txt");
+					running = 0;
+					main_menu = 1;
+				}
 
 			if (player->bossFight == 1 && (boss->hp == 1000 || (boss->hp <= 500 && boss->hp >= 450)))
 			{
@@ -1057,10 +1412,10 @@ int main(int argc, char* argv[])
 				if (enemy[i] != NULL)                                                                                    // —юда картинку стрелка
 					dst_enem_rect[i] = { (int)enemy[i]->x,(int)enemy[i]->y,enemy_rect_zombie.w,enemy_rect_zombie.h };
 			dst_rect = { (int)player->x,(int)player->y,player_rect.w,player_rect.h };
-		
+
 			for (int i = ZOMBIE_COUNT + SHOOTER_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT + ROCKET_COUNT; i++)
 				if (enemy[i] != NULL)                                                                                    // —юда картинку рокет
-					dst_enem_rect[i] = {(int)enemy[i]->x ,(int)enemy[i]->y,enemy_rect_rocket.w+50,enemy_rect_rocket.h+60};
+					dst_enem_rect[i] = { (int)enemy[i]->x ,(int)enemy[i]->y,enemy_rect_rocket.w + 50,enemy_rect_rocket.h + 60 };
 
 			Tickrate(lasttime, newtime, dt);
 
@@ -1080,7 +1435,12 @@ int main(int argc, char* argv[])
 			if (player->bossFight != 1)
 				if (player->x >= WINDOW_WIDTH / 2 && isright) {
 					player->x = WINDOW_WIDTH / 2;
-					back_rect.x -= 3;
+					if (!player->level1_complete)
+						back_rect.x -= 3;
+					if (player->level1_complete && !player->level2_complete)
+						level2_back.x -= 3;
+					if (player->level1_complete && player->level2_complete && !player->level3_complete)
+						level3_back.x -= 3;
 					for (int j = 0; j < sizeArray; j++) {
 						(*CollisArray + j)->x -= 3;
 					}
@@ -1133,6 +1493,12 @@ int main(int argc, char* argv[])
 					{
 						boss->x -= 3;
 					}
+					if (player->level1_complete && player->level2_complete && level3_finish != NULL)
+						level3_finish->x -= 3;
+
+					if (player->level1_complete && !player->level3_complete && level2_finish != NULL)
+						level2_finish->x -= 3;
+
 					if (bossUpRect != NULL)
 						bossUpRect->x -= 3;
 					if (bossDownRect != NULL)
@@ -1167,7 +1533,12 @@ int main(int argc, char* argv[])
 				else if (player->x >= WINDOW_WIDTH / 2 - 10 && isleft)
 				{
 					player->x = WINDOW_WIDTH / 2;
-					back_rect.x += 3;
+					if (!player->level1_complete)
+						back_rect.x += 3;
+					if (player->level1_complete && !player->level2_complete)
+						level2_back.x += 3;
+					if (player->level1_complete && player->level2_complete && !player->level3_complete)
+						level3_back.x += 3;
 					for (int j = 0; j < sizeArray; j++) {
 						(*CollisArray + j)->x += 3;
 					}
@@ -1220,6 +1591,13 @@ int main(int argc, char* argv[])
 					{
 						boss->x += 3;
 					}
+
+					if (player->level1_complete && player->level2_complete && level3_finish != NULL)
+						level3_finish->x += 3;
+
+					if (player->level1_complete && !player->level2_complete && level2_finish != NULL)
+						level2_finish->x += 3;
+
 					if (bossUpRect != NULL)
 						bossUpRect->x += 3;
 					if (bossDownRect != NULL)
@@ -1257,6 +1635,8 @@ int main(int argc, char* argv[])
 			dst_rect_bonus_damage = { damage_rect.x,damage_rect.y,damage_rect.w,damage_rect.h };
 			dst_rect_bonus_speed = { speed_rect.x,speed_rect.y,speed_rect.w,speed_rect.h };
 			dst_rect_bg = { back_rect.x,back_rect.y,back_rect.w,back_rect.h };
+			dst_rect_lv2 = { level2_back.x,level2_back.y,level2_back.w,level2_back.h };
+			dst_rect_lv3 = { level3_back.x,level3_back.y,level3_back.w,level3_back.h };
 
 
 
@@ -1368,8 +1748,12 @@ int main(int argc, char* argv[])
 			}
 
 
-
-			SDL_RenderCopy(renderer, back_tex, NULL, &dst_rect_bg);
+			if (!player->level1_complete)
+				SDL_RenderCopy(renderer, back_tex, NULL, &dst_rect_bg);
+			if (player->level1_complete && !player->level2_complete)
+				SDL_RenderCopy(renderer, level2_Back, NULL, &dst_rect_bg);
+			if (player->level1_complete && player->level2_complete && !player->level3_complete)
+				SDL_RenderCopy(renderer, level3_Back, NULL, &dst_rect_bg);
 
 
 			dst_rect_Flame = { flame_rect.x,flame_rect.y , flame_rect.w,flame_rect.h };
@@ -1657,7 +2041,7 @@ int main(int argc, char* argv[])
 							EnemyMove(enemy[i], enemyRadius[i], playerRect, enemyRect[i], mainPhys, *CollisArray, sizeArray, dt, last_enemy_y, new_enemy_y, dy_enemy, player, newtime, direction_enemy[i]);
 					Shoot(newtime, lastShotTime, fire, shootRight, shootLeft, shootUp, shootDown, direction, n, bullet, playerRect, dt, bulletRect, enemy, enemyRect, enemyRadius, player, renderer, bullet_rect, bullet_tex, PowerfulTiming, PoorTiming, ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
 					IsPlayerDie(player, respawn_x, respawn_y, rifle, running, main_menu);
-					BossFight(boss, player, playerRect, renderer, bullet_rect, bullet_tex, bossBullet, bossBulletRect, dt, n_boss, newtime, lastShotTimeBoss, bossUpRect, bossDownRect, bullet, bulletRect);
+					BossFight(boss, player, playerRect, renderer, bullet_rect, bullet_tex, bossBullet, bossBulletRect, dt, n_boss, newtime, lastShotTimeBoss, bossUpRect, bossDownRect, bullet, bulletRect, running, main_menu);
 				}
 				if (reload == 1)
 				{
@@ -1694,7 +2078,7 @@ int main(int argc, char* argv[])
 						{
 							SDL_RenderFillRectF(renderer, bulletRect[i]);
 							SDL_RenderDrawRectF(renderer, bulletRect[i]);
-							
+
 						}
 					}
 					for (int i = 0; i < 100; i++)
@@ -1750,8 +2134,7 @@ int main(int argc, char* argv[])
 		bossBulletRect[i] = NULL;
 		bossBulletRect[i] = NULL;
 	}
-	SaveProgress(player, player->weapon, "SlotSave1.txt");
-	SaveScoreTable(player, "ScoreTable.txt");
+	//	SaveProgress(player, player->weapon, "SlotSave1.txt");
 	TTF_CloseFont(font);
 
 	Quit(&window, &renderer, &screen_surface);

@@ -130,7 +130,9 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 	{
 		SDL_FPoint* point[1000];
 		for (int i = 0; i < 1000; i++)
-			point[i] = NULL;
+		{
+			point[i] = new SDL_FPoint;
+		}
 		int count = 0;
 		for (int i = 0; i < sizePoint; i++)
 		{
@@ -140,7 +142,7 @@ void PlayerMove(Player* player, float& last_y, float& new_y, float& dy, int& dt,
 
 				for (int k = 0; k < count; k++)
 				{
-					point[k]->x = platform[i].x2 + k;
+    				point[k]->x = platform[i].x2 + k;
 					point[k]->y = platform[i].y2 - 0.305 * k;
 				}
 			}
@@ -311,13 +313,13 @@ void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, 
 	if (player->hp <= 0)
 	{
 		player->is_die = 1;
-		player->score -= 30;
+		player->score -= 200;
 	}
 
 	if (player->is_die == 1)
 	{
 		player->is_die = 0;
-		player->hp = 100;
+		player->hp = 150;
 		player->x = respawn_x;
 		player->y = respawn_y;
 		player->weapon = rifle;
@@ -328,7 +330,6 @@ void IsPlayerDie(Player* player, int& respawn_x, int& respawn_y, Weapon* rifle, 
 	if (player->life <= 0)
 	{
 		running = 0;
-		
 	}
 }
 void BackGround_move(SDL_FRect* CollisArray, Player* player, int& sizeArray, bool& isleft, bool& isright) {
@@ -505,7 +506,7 @@ void SaveProgress(Player* player, Weapon* weapon, const char* fileName)
 Player* LoadProgress(const char* fileName)
 {
 
-	Player* player = new Player();
+	Player* player = (Player*)malloc(sizeof(Player));
 
 	FILE* file;
 	fopen_s(&file, fileName, "rb");

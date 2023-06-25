@@ -61,6 +61,7 @@ SDL_FRect* MassLoad(SDL_FRect*& CollisArray, SlopePlatform*& platform, const cha
 	fscanf_s(file, "%d", &sizeArray);
 
 	CollisArray = (SDL_FRect*)malloc(sizeArray * sizeof(SDL_FRect));
+
 	if (CollisArray == NULL)
 	{
 		printf("Ошибка при выделении памяти\n");
@@ -95,7 +96,7 @@ SDL_FRect* MassLoad(SDL_FRect*& CollisArray, SlopePlatform*& platform, const cha
 }
 
 void BossFight(Boss* boss, Player* player, SDL_FRect* playerRect, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, Bullet** bossBullet,
-	SDL_FRect** bossBulletRect, int& dt, int& n_boss, int& newtime, Uint32* lastShotTimeBoss, SDL_FRect* bossUpRect, SDL_FRect* bossDownRect, Bullet** bullet, SDL_FRect** bulletRect)
+	SDL_FRect** bossBulletRect, int& dt, int& n_boss, int& newtime, Uint32* lastShotTimeBoss, SDL_FRect* bossUpRect, SDL_FRect* bossDownRect, Bullet** bullet, SDL_FRect** bulletRect, bool& running, bool& main_menu)
 {
 	if ((boss->x - player->x <= 1100 || player->bossFight == 1))
 	{
@@ -272,7 +273,12 @@ void BossFight(Boss* boss, Player* player, SDL_FRect* playerRect, SDL_Renderer* 
 		}
 		if (boss->stage == 0)
 			if (player->x >= 1600)
+			{
 				player->level1_complete = 1;
+				SaveProgress(player, player->weapon, "reserveSave.txt");
+				running = 0;
+				main_menu = 1;
+			}
 	}
 
 	if (n_boss >= 100)
