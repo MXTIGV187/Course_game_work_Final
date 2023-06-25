@@ -72,6 +72,7 @@ struct Rocket {
 	float y;
 	float speed;
 	float angle;
+	Uint32 lifeTime;
 };
 
 struct Score
@@ -85,7 +86,7 @@ Player* PlayerInit(int hp, int score, int life, float x, float y, bool is_die, b
 mainPhysics* PhysInit(float speed, float gravity);
 Enemy* EnemyInit(int hp, float x, float y, bool is_die, bool is_jump, EnemyType type);
 Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up, bool down, bool firstBullet, bool shotAngleUp, bool shotAngleDown);
-Rocket* RocketInit(float x, float y, float speed, float angle);
+Rocket* RocketInit(float x, float y, float speed, float angle, Uint32 lifeTime);
 void EnemyMove(Enemy* enemy, SDL_FRect* enemyRadius, SDL_FRect* playerRect, SDL_FRect* enemyRect, mainPhysics* mainPhys, SDL_FRect* CollisArray, int& sizeArray, int& dt,
 	float& last_enemy_y, float& new_enemy_y, float& dy_enemy, Player* player, int& newtime, int direction_enemy);
 SDL_FRect* checkCollision(SDL_FRect* playerRect, SDL_FRect* CollisArray, int& sizeArray);

@@ -33,7 +33,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 	if (player->bonus != NULL)
 	{
 		if (player->bonus->type == SpeedShoot)
-		{ 
+		{
 			PoorTiming = 150;
 			PowerfulTiming = 500;
 			if (newtime - player->bonus->lifeTime >= 15000)
@@ -831,7 +831,7 @@ void Shoot(int& newtime, Uint32& lastShotTime, bool& fire, bool& shootRight, boo
 	}
 }
 
-void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemyBullet, Rocket** rocket, SDL_FRect** rocketRect, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int* direction_enemy, int ZOMBIE_COUNT, int SHOOTER_COUNT, int ROCKET_COUNT)
+void EnemyShoot(Uint32* lastShotTimeEnemy, Uint32* lastShotRocket, int& newtime, int& dt, Bullet** enemyBullet, Rocket** rocket, SDL_FRect** rocketRect, Enemy** enemy, Player* player, SDL_FRect** enemyRadius, SDL_FRect** enemyRect, SDL_FRect** enemyBulletRect, SDL_FRect* playerRect, int& n_enemy, int& n_rocket, SDL_Renderer* renderer, SDL_Rect bullet_rect, SDL_Texture* bullet_tex, int* direction_enemy, int ZOMBIE_COUNT, int SHOOTER_COUNT, int ROCKET_COUNT)
 {
 	for (int i = ZOMBIE_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT; i++)
 	{
@@ -842,7 +842,7 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 				{
 					if (playerRect->x >= enemyRect[i]->x)
 					{
-					direction_enemy[i] = DIR_RIGHT;
+						direction_enemy[i] = DIR_RIGHT;
 						//direction
 
 						enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1, 0, 0, 0, true, 0, 0);
@@ -869,23 +869,21 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 		if (enemy[i] != NULL && player != NULL)
 			if (enemy[i]->type == Rocket_man && SDL_HasIntersectionF(enemyRadius[i], playerRect))
 			{
-				if (newtime - lastShotTimeEnemy[i] >= 1000)
+				if (newtime - lastShotTimeEnemy[i] >= 5000)
 				{
 					if (playerRect->x >= enemyRect[i]->x)
 					{
 						direction_enemy[i] = DIR_RIGHT;
 						//direction
 
-						rocket[n_enemy++] = RocketInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1);
-
 					}
 					else if (playerRect->x <= enemyRect[i]->x)
 					{
 						direction_enemy[i] = DIR_LEFT;
 						//direction
-
-						rocket[n_enemy++] = RocketInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1);
 					}
+					rocket[n_rocket++] = RocketInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 300, 1, SDL_GetTicks());
+
 					/*	else if (shootUp == 1)
 							enemyBullet[n_enemy++] = BulletInit(enemyRect[i]->x + enemyRect[i]->w, enemyRect[i]->y + 30, 500, 0, 0, 1, 0, true, 0, 0);
 						else if (shootDown == 1)
@@ -895,18 +893,66 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 				}
 			}
 	}
-	for (int i = 0; i < 100; i++)
-		if (enemyBullet[i] != NULL && player != NULL)
-		{
-			rocketRect[i] = InitObject(enemyBullet[i]->x, enemyBullet[i]->y, 10, 10);
-			//Cюда свой код
-			//
-			//
-			//
 
-			// 
-			//логику короче
+	for (int i = 0; i < 100; i++)
+	{
+		if (rocket[i] != NULL && player != NULL)
+		{
+			float x = playerRect->x - rocket[i]->x;
+			float y = playerRect->y - rocket[i]->y;
+			float len = sqrt(x * x + y * y);
+			rocketRect[i] = InitObject(rocket[i]->x, rocket[i]->y, 10, 10);
+			if (abs(int(rocket[i]->x - player->x)) >= 10)
+				if (len >= 3)
+				{
+					if (len == 0)
+					{
+						len = 1;
+					}
+					else
+					{
+						x /= len;
+						y /= len;
+						rocket[i]->x += x * dt * rocket[i]->speed / 1000;
+						rocket[i]->y += y * dt * rocket[i]->speed / 1000;
+					}
+				}
+			if (abs(int(rocket[i]->x - player->x)) < 10)
+				if (len >= 3)
+				{
+					if (len == 0)
+					{
+						len = 1;
+					}
+					else
+					{
+						x /= len;
+						y /= len;
+						rocket[i]->x += x * dt * (rocket[i]->speed / 2) / 1000;
+						rocket[i]->y += y * dt * (rocket[i]->speed / 2) / 1000;
+					}
+				}
+
+
+			if (newtime - rocket[i]->lifeTime >= 3000)
+			{
+				rocketRect[i] = NULL;
+				rocket[i] = NULL;
+				free(rocketRect[i]);
+				free(rocket[i]);
+			}
+			else if (SDL_HasIntersectionF(playerRect, rocketRect[i]))
+			{
+				player->hp -= 10;
+				rocketRect[i] = NULL;
+				rocket[i] = NULL;
+				free(rocketRect[i]);
+				free(rocket[i]);
+			}
 		}
+	}
+
+
 	for (int i = 0; i < 100; i++)
 		if (enemyBullet[i] != NULL && player != NULL)
 		{
@@ -1009,5 +1055,9 @@ void EnemyShoot(Uint32* lastShotTimeEnemy, int& newtime, int& dt, Bullet** enemy
 	if (n_enemy >= 99)
 	{
 		n_enemy = 0;
+	}
+	if (n_rocket >= 99)
+	{
+		n_rocket = 0;
 	}
 }

@@ -59,13 +59,14 @@ Bullet* BulletInit(float x, float y, float speed, bool right, bool left, bool up
 	return bullet;
 }
 
-Rocket* RocketInit(float x, float y, float speed, float angle)
+Rocket* RocketInit(float x, float y, float speed, float angle, Uint32 lifeTime)
 {
 	Rocket* rocket = (Rocket*)malloc(sizeof(Rocket));
 	rocket->x = x;
 	rocket->y = y;
 	rocket->speed = speed;
 	rocket->angle = angle;
+	rocket->lifeTime = lifeTime;
 	return rocket;
 }
 

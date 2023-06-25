@@ -275,6 +275,12 @@ int main(int argc, char* argv[])
 	Uint32 lastShotTime = SDL_GetTicks();
 	Uint32 lastShotTimeEnemy[200];
 	Uint32 lastShotTimeBoss[100];
+	Uint32 lastShotRocket[100];
+	for (int i = 0; i < 100; i++)
+	{
+		lastShotRocket[i] = SDL_GetTicks();
+	}
+
 
 	Enemy* enemy[200];
 	int ZOMBIE_COUNT = 0, SHOOTER_COUNT = 0, ROCKET_COUNT = 1;
@@ -294,7 +300,7 @@ int main(int argc, char* argv[])
 
 	SDL_Rect enemy_rect_rocket;
 	SDL_Texture* enemy_rocket_tex_idle = loadTextureFromFile("Gunner_Green_Idle.png", &enemy_rect_rocket, window, renderer, screen_surface);
-
+	enemy_rect_rocket.w = enemy_rect_rocket.h;
 
 	Bullet* bullet[50];
 	SDL_FRect* bulletRect[50];
@@ -858,6 +864,7 @@ int main(int argc, char* argv[])
 		int n = 0;
 		int n_enemy = 0;
 		int n_boss = 0;
+		int n_rocket = 0;
 		bool shootUp = 0;
 		bool shootDown = 0;
 		bool shootLeft = 0;
@@ -954,6 +961,11 @@ int main(int argc, char* argv[])
 
 		while (running)
 		{
+			  // Array to store the remaining lifespan of each rocket
+
+			// Initialize the rocket lifespan array
+			
+
 			if (player->bossFight == 1 && (boss->hp == 1000 || (boss->hp <= 500 && boss->hp >= 450)))
 			{
 				if (boss->stage == 1)
@@ -1048,7 +1060,7 @@ int main(int argc, char* argv[])
 		
 			for (int i = ZOMBIE_COUNT + SHOOTER_COUNT; i < SHOOTER_COUNT + ZOMBIE_COUNT + ROCKET_COUNT; i++)
 				if (enemy[i] != NULL)                                                                                    // —юда картинку рокет
-					dst_enem_rocket_rect = { (int)enemy[i]->x ,(int)enemy[i]->y,enemy_rect_rocket.w,enemy_rect_rocket.h };
+					dst_enem_rect[i] = {(int)enemy[i]->x ,(int)enemy[i]->y,enemy_rect_rocket.w+50,enemy_rect_rocket.h+60};
 
 			Tickrate(lasttime, newtime, dt);
 
@@ -1098,7 +1110,7 @@ int main(int argc, char* argv[])
 					for (int i = 0; i < 100; i++)
 					{
 						if (rocket[i] != NULL && player != NULL)
-							rocket[i] -= 3;
+							rocket[i]->x -= 3;
 					}
 					for (int i = 0; i < 1000; i++)
 						if (bossBullet[i] != NULL && player != NULL && bossBulletRect[i] != NULL)
@@ -1185,7 +1197,7 @@ int main(int argc, char* argv[])
 					for (int i = 0; i < 100; i++)
 					{
 						if (rocket[i] != NULL && player != NULL)
-							rocket[i] -= 3;
+							rocket[i]->x -= 3;
 					}
 					for (int i = 0; i < 1000; i++)
 						if (bossBullet[i] != NULL && player != NULL && bossBulletRect[i] != NULL)
@@ -1570,12 +1582,12 @@ int main(int argc, char* argv[])
 							{
 								cur_frametime -= max_frametime;
 								frame = (frame + 1) % frame_count_shooter;
-								enemy_rect_shooter.x = enemy_rect_shooter.w * frame;
+								enemy_rect_rocket.x = enemy_rect_rocket.w * frame;
 							}
 							if (direction_enemy[i] == DIR_RIGHT)
-								SDL_RenderCopy(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i]);
+								SDL_RenderCopy(renderer, enemy_rocket_tex_idle, &enemy_rect_rocket, &dst_enem_rect[i]);
 							else
-								SDL_RenderCopyEx(renderer, enemy_shooter_tex_idle, &enemy_rect_shooter, &dst_enem_rect[i], 0, NULL, SDL_FLIP_HORIZONTAL);
+								SDL_RenderCopyEx(renderer, enemy_rocket_tex_idle, &enemy_rect_rocket, &dst_enem_rect[i], 0, NULL, SDL_FLIP_HORIZONTAL);
 						}
 					}
 				SDL_Rect score_rect = { 5 ,-20,100,100 };
@@ -1638,7 +1650,7 @@ int main(int argc, char* argv[])
 
 				if (player != NULL)
 				{
-					EnemyShoot(lastShotTimeEnemy, newtime, dt, enemyBullet, rocket, rocketRect, enemy, player, enemyRadius, enemyRect, enemyBulletRect, playerRect, n_enemy, renderer, bullet_rect, bullet_tex, direction_enemy, ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
+					EnemyShoot(lastShotTimeEnemy, lastShotRocket, newtime, dt, enemyBullet, rocket, rocketRect, enemy, player, enemyRadius, enemyRect, enemyBulletRect, playerRect, n_enemy, n_rocket, renderer, bullet_rect, bullet_tex, direction_enemy, ZOMBIE_COUNT, SHOOTER_COUNT, ROCKET_COUNT);
 					PlayerMove(player, last_y, new_y, dy, dt, isup, isdown, isleft, isright, mainPhys, playerRect, *CollisArray, sizeArray, *platform, sizePoint);
 					for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT + ROCKET_COUNT; i++)
 						if (enemy[i] != NULL)
@@ -1661,7 +1673,7 @@ int main(int argc, char* argv[])
 						SDL_RenderFillRectF(renderer, *CollisArray + i);
 						SDL_RenderDrawRectF(renderer, *CollisArray + i);
 					}
-					//SDL_RenderFillRectF(renderer, playerRect);
+					SDL_RenderFillRectF(renderer, playerRect);
 					SDL_SetRenderDrawColor(renderer, 200, 150, 200, 255);
 					for (int i = 0; i < ZOMBIE_COUNT + SHOOTER_COUNT + ROCKET_COUNT; i++)
 						if (enemyRadius[i] != NULL)
@@ -1682,6 +1694,16 @@ int main(int argc, char* argv[])
 						{
 							SDL_RenderFillRectF(renderer, bulletRect[i]);
 							SDL_RenderDrawRectF(renderer, bulletRect[i]);
+							
+						}
+					}
+					for (int i = 0; i < 100; i++)
+					{
+						if (rocketRect[i] != NULL)
+						{
+							SDL_RenderFillRectF(renderer, rocketRect[i]);
+							SDL_RenderDrawRectF(renderer, rocketRect[i]);
+
 						}
 					}
 					for (int i = 0; i < 200; i++)
